@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+   <children>
+      <VBox alignment="CENTER">
+         <children>
+            <Label fx:id="TitleLabel" prefHeight="53.0" prefWidth="137.0" text="CompanyInc Login Portal" />
+            <HBox alignment="CENTER" prefHeight="51.0" prefWidth="411.0">
+               <children>
+                  <Label fx:id="UsernameLabel" text="Username">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="UserNameTextField" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="411.0">
+               <children>
+                  <Label fx:id="PasswordLabel" text="Password">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="PasswordTextField" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="39.0" prefWidth="411.0">
+               <children>
+                  <Label fx:id="CurrentLocationLabel" text="Current Location:">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="SetCurrentLocationLabel" text="SetCurrentLocation" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="56.0" prefWidth="411.0">
+               <children>
+                  <Button fx:id="LoginButton" alignment="CENTER" mnemonicParsing="false" onAction="#OnActionLogin" text="Login">
+                     <HBox.margin>
+                        <Insets left="270.0" right="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="ExitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="26.0" prefWidth="49.0" text="Exit" textAlignment="CENTER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
