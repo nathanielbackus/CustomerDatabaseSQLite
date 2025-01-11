@@ -55,7 +55,7 @@ public class UserDAO {
     //add
     public static int addUser(int userID, String username, String password, String CreatedBy) throws SQLException {
         JDBC.openConnection();
-        String sql = "INSERT INTO CUSTOMERS (userID, username, password, Create_Date, Created_By) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
+        String sql = "INSERT INTO users (user_ID, username, password, Create_Date, Created_By) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, userID);
         ps.setString(2, username);

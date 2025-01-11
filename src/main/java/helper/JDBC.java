@@ -15,7 +15,7 @@ public abstract class JDBC {
 
     private static final String protocol = "jdbc";
     private static final String vendor = ":sqlite:";
-    private static final String databaseName = "client_schedule.sqlite"; // SQLite file name
+    private static final String databaseName = "client_schedule.db"; // SQLite file name
     private static final String jdbcUrl = protocol + vendor + databaseName; // SQLite connection URL
 
     public static Connection connection;
@@ -51,7 +51,9 @@ public abstract class JDBC {
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
+                password TEXT NOT NULL,
+                Create_Date DATETIME NOT NULL,
+                created_by TEXT NOT NULL
             );
         """;
 
