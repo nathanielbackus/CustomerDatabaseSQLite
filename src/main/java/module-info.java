@@ -3,6 +3,7 @@ module backus.firstscreen {
     requires javafx.fxml;
     requires java.sql;
     requires javafx.base;
+    requires java.desktop;
 
 
     opens controller to javafx.fxml;

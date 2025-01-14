@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane prefHeight="510.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsersContactsController">
+    <children>
+        <Label layoutX="15.0" layoutY="18.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Contacts" />
+        <Button fx:id="OnActionAddContact" layoutX="300.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionAddContact" prefHeight="26.0" prefWidth="59.0" text="Add" />
+        <Button fx:id="OnActionEditContact" layoutX="380.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionEditContact" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+        <Button fx:id="OnActionDeleteContact" layoutX="460.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionDeleteContact" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+        <TableView fx:id="AllContactsTableView" layoutX="13.0" layoutY="62.0" prefHeight="187.0" prefWidth="510.0">
+            <columns>
+                <TableColumn fx:id="ContactsTBID" prefWidth="48.131869316101074" text="ID" />
+                <TableColumn fx:id="ContactsTBName" prefWidth="182.2627182006836" text="Name" />
+                <TableColumn fx:id="ContactsTBEmail" prefWidth="278.73728942871094" text="Email" />
+            </columns>
+        </TableView>
+        <Line endX="409.10284423828125" layoutX="115.0" layoutY="270.0" opacity="0.21" startX="-100.0" />
+        <Label layoutX="16.0" layoutY="285.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Users" />
+        <Button fx:id="OnActionAddUser" layoutX="220.0" layoutY="291.0" mnemonicParsing="false" onAction="#OnActionAddUser" prefHeight="26.0" prefWidth="59.0" text="Add" />
+        <Button fx:id="OnActionEditUser" layoutX="300.0" layoutY="290.0" mnemonicParsing="false" onAction="#OnActionEditUser" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+        <Button fx:id="OnActionDeleteUser" layoutX="380.0" layoutY="290.0" mnemonicParsing="false" onAction="#OnActionDeleteUser" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+        <TableView fx:id="AllUsersTableView" layoutX="12.0" layoutY="331.0" prefHeight="156.0" prefWidth="426.0">
+            <columns>
+                <TableColumn fx:id="UserTBID" prefWidth="34.69780349731445" text="ID" />
+                <TableColumn fx:id="UserTBUsername" prefWidth="122.35988998413086" text="Username" />
+                <TableColumn fx:id="UserTBPassword" prefWidth="267.50001525878906" text="Password" />
+            </columns>
+        </TableView>
+        <Line endX="685.1285400390625" endY="3.5" layoutX="-237.0" layoutY="266.0" opacity="0.21" startX="685.1285400390625" startY="215.10830688476562" />
+        <Button fx:id="OnActionCustomersAppointments" alignment="CENTER" layoutX="460.0" layoutY="356.0" mnemonicParsing="false" onAction="#OnActionCustomersAppointments" prefHeight="38.0" prefWidth="72.0" text="Back" />
+    </children>
+</AnchorPane>

@@ -23,19 +23,20 @@ import java.sql.SQLException;
 import java.time.*;
 import java.util.ResourceBundle;
 
-public class AddAppointmentController implements Initializable {
+public class AppointmentController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
     @FXML
-    private TextField AddAppointmentCustomerID, AddAppointmentDescription, AddAppointmentLocation, AddAppointmentTitle,
-            AddAppointmentType, AddAppointmentUserID, AppointmentID;
+    private TextField AppointmentCustomerIDTextField, AppointmentDescriptionTextField, AppointmentLocationTextField, AppointmentTitleTextField,
+            AppointmentTypeTextField, AppointmentUserIDTextField, AppointmentIDTextField;
     @FXML
-    private DatePicker AddAppointmentEndDate, AddAppointmentStartDate;
+    private DatePicker AppointmentEndDatePicker, AppointmentStartDatePicker;
     @FXML
-    private ComboBox<LocalTime> AddAppointmentEndTimeComboBox, AddAppointmentStartTimeComboBox;
+    private ComboBox<LocalTime> AppointmentEndTimeComboBox, AppointmentStartTimeComboBox;
     @FXML
-    private ComboBox<Contact> AddContactComboBox;
+    private ComboBox<Contact> ContactComboBox;
+    Appointment CurrentAppointment;
     /**event to open the customerappointments scene**/
     @FXML
     void OnActionCustomerAppointments(ActionEvent event) throws IOException {
@@ -44,43 +45,63 @@ public class AddAppointmentController implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
+
+    public void setAppointment(Appointment appointment) throws SQLException {
+        CurrentAppointment = appointment;
+        AppointmentIDTextField.setText(String.valueOf(appointment.getAppointmentID()));
+        AppointmentTitleTextField.setText(appointment.getTitle());
+        AppointmentDescriptionTextField.setText(appointment.getDescription());
+        AppointmentLocationTextField.setText(appointment.getLocation());
+        ContactComboBox.getItems();
+        for (Contact contact : ContactComboBox.getItems()) {
+            if (contact.getContactID() == appointment.getContactID()) {
+                ContactComboBox.getSelectionModel().select(contact);
+                break;
+            }
+        }
+        AppointmentTypeTextField.setText(appointment.getType());
+        AppointmentCustomerIDTextField.setText(String.valueOf(appointment.getCustomerID()));
+        AppointmentUserIDTextField.setText(String.valueOf(appointment.getUserID()));
+        AppointmentStartDatePicker.setValue(appointment.getStartTime().toLocalDate());
+        AppointmentStartTimeComboBox.setValue(appointment.getStartTime().toLocalTime());
+        AppointmentEndDatePicker.setValue(appointment.getEndTime().toLocalDate());
+        AppointmentEndTimeComboBox.setValue(appointment.getEndTime().toLocalTime());
+    }
+
     /**event to collect all data in the datafields, compare them to logical checks, and then pass them as an arguement to the creation of AppointmentDAO's addappointment**/
     @FXML
-    void OnActionSaveNewAppointment(ActionEvent event) throws IOException {
+    void OnActionSaveAppointment(ActionEvent event) throws IOException {
         try {
-            int appointmentID = AppointmentDAOImpl.AppointmentGenerateID();
-            AppointmentID.setText(String.valueOf(appointmentID));
-            String title = AddAppointmentTitle.getText();
-            String description = AddAppointmentDescription.getText();
-            String location = AddAppointmentLocation.getText();
-            String type = AddAppointmentType.getText();
-            String stringStartTime = String.valueOf((AddAppointmentStartTimeComboBox.getSelectionModel().getSelectedItem()));
+            String title = AppointmentTitleTextField.getText();
+            String description = AppointmentDescriptionTextField.getText();
+            String location = AppointmentLocationTextField.getText();
+            String type = AppointmentTypeTextField.getText();
+            String stringStartTime = String.valueOf((AppointmentStartTimeComboBox.getSelectionModel().getSelectedItem()));
             if (stringStartTime == null) {
                 JDBC.ErrorMessage("Input Error", "Start time not selected", "Please select a start time.");
                 return;
             }
             LocalTime startTime = LocalTime.parse(stringStartTime);
-            LocalDate startDate = AddAppointmentStartDate.getValue();
+            LocalDate startDate = AppointmentStartDatePicker.getValue();
             LocalDateTime startTimeAndDate = LocalDateTime.of(startDate, startTime);
-            String stringEndTime = String.valueOf(AddAppointmentEndTimeComboBox.getSelectionModel().getSelectedItem());
+            String stringEndTime = String.valueOf(AppointmentEndTimeComboBox.getSelectionModel().getSelectedItem());
             if (stringEndTime == null) {
                 JDBC.ErrorMessage("Input Error", "End time not selected", "Please select a end time.");
                 return;
             }
             LocalTime endTime = LocalTime.parse(stringEndTime);
-            LocalDate endDate = AddAppointmentEndDate.getValue();
+            LocalDate endDate = AppointmentEndDatePicker.getValue();
             LocalDateTime endTimeAndDate = LocalDateTime.of(endDate, endTime);
-            int customerID = Integer.parseInt(AddAppointmentCustomerID.getText());
-            int userID = Integer.parseInt(AddAppointmentUserID.getText());
-            Contact contact = AddContactComboBox.getSelectionModel().getSelectedItem();
+            int customerID = Integer.parseInt(AppointmentCustomerIDTextField.getText());
+            int userID = Integer.parseInt(AppointmentUserIDTextField.getText());
+            Contact contact = ContactComboBox.getSelectionModel().getSelectedItem();
             if (contact == null) {
                 JDBC.ErrorMessage("Input Error", "Contact not selected", "Please select a contact.");
                 return;
             }
-            JDBC.openConnection();
             String sql = "SELECT contact_id FROM contacts WHERE contact_name = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setString(1, AddContactComboBox.getSelectionModel().getSelectedItem().toString());
+            ps.setString(1, ContactComboBox.getSelectionModel().getSelectedItem().toString());
             ResultSet rs = ps.executeQuery();
             int contactID = -1;
             if (rs.next()) {
@@ -100,9 +121,9 @@ public class AddAppointmentController implements Initializable {
             LocalTime estStartTime = JDBC.convertToEST(startTime, ZoneId.systemDefault());
             LocalTime estEndTime = JDBC.convertToEST(endTime, ZoneId.systemDefault());
             if ((estStartTime.getHour() > 22)
-            || estStartTime.getHour() < 8
-            || estEndTime.getHour() > 22
-            || estEndTime.getHour() < 8) {
+                || estStartTime.getHour() < 8
+                || estEndTime.getHour() > 22
+                || estEndTime.getHour() < 8) {
                 JDBC.ErrorMessage("Time Error", "Appointment Start Time or End Time Outside of Business Hours", "Please choose a time with our office hours of 8:00 a.m. to 22:00 p.m. ET");
                 return;
             }
@@ -126,11 +147,20 @@ public class AddAppointmentController implements Initializable {
                 return;
             }
             String CreatedBy = LoginController.UserLoggedIn();
-            AppointmentDAO.addAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, CreatedBy, customerID, userID, contactID);
+            String UpdatedBy = LoginController.UserLoggedIn();
+            int appointmentID;
+            if (AppointmentIDTextField.getText().isEmpty()) {
+                appointmentID = AppointmentDAOImpl.AppointmentGenerateID();
+                AppointmentIDTextField.setText(String.valueOf(appointmentID));
+                AppointmentDAO.addAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, CreatedBy, customerID, userID, contactID);
+            } else{
+                appointmentID = Integer.parseInt(AppointmentIDTextField.getText());
+                AppointmentDAO.updateAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, UpdatedBy, customerID, userID, contactID);
+
+            }
             stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));
             stage.setScene(new Scene(scene));
-            //add errors for 1. contact drop down 2. if start time > end time
         } catch (NumberFormatException e){
             JDBC.ErrorMessage("Input Error", "Error in adding customer due to incorrect input", "Please enter valid values for each text field.");
         }
@@ -147,14 +177,14 @@ public class AddAppointmentController implements Initializable {
             throw new RuntimeException(e);
         }
         ObservableList<Contact> contacts = ContactDAOImpl.getAllContacts();
-        AddContactComboBox.setItems(contacts);
+        ContactComboBox.setItems(contacts);
         /**populate times in comboboxes**/
         String timeslots[] =
                 {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};
         ComboBox combo_box = new ComboBox(FXCollections.observableArrayList(timeslots));
-        AddAppointmentStartTimeComboBox.getItems().clear();
-        AddAppointmentStartTimeComboBox.getItems().addAll();
-        AddAppointmentStartTimeComboBox.setItems(combo_box.getItems());
-        AddAppointmentEndTimeComboBox.setItems(combo_box.getItems());
+        AppointmentStartTimeComboBox.getItems().clear();
+        AppointmentStartTimeComboBox.getItems().addAll();
+        AppointmentStartTimeComboBox.setItems(combo_box.getItems());
+        AppointmentEndTimeComboBox.setItems(combo_box.getItems());
     }
 }

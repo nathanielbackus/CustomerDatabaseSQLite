@@ -86,11 +86,18 @@ public class CustomersAppointmentsController implements Initializable {
             }
         }
     }
+    @FXML
+    void OnActionUsersContacts(ActionEvent event) throws IOException {
+        stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("UsersContacts.fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
     /**load add appointment scene**/
     @FXML
     void OnActionAddAppointment(ActionEvent event) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("AddAppointment.fxml"));
+        scene = FXMLLoader.load(getClass().getResource("Appointment.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
     }
@@ -98,15 +105,16 @@ public class CustomersAppointmentsController implements Initializable {
     @FXML
     void OnActionUpdateAppointment(ActionEvent event) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("UpdateAppointment.fxml"));
+        loader.setLocation(getClass().getResource("Appointment.fxml"));
         loader.load();
-        UpdateAppointmentController UAController = loader.getController();
-        UAController.setAppointment(AllAppointmentsTableView.getSelectionModel().getSelectedItem());
+        AppointmentController AController = loader.getController();
+        AController.setAppointment(AllAppointmentsTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
         stage.showAndWait();
     }
+
     /**delete selected item from appointment tableview and from database**/
     @FXML
     void OnActionDeleteAppointment(ActionEvent event) throws IOException, SQLException {

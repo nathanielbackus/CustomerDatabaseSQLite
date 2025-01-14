@@ -53,7 +53,7 @@
         <Line endX="685.1286010742188" endY="-9.5" layoutX="125.0" layoutY="332.0" opacity="0.21" startX="685.1286010742188" startY="295.21337890625" />
         <Button fx:id="OnActionReports" layoutX="849.0" layoutY="360.0" mnemonicParsing="false" onAction="#OnActionReports" prefHeight="38.0" prefWidth="72.0" text="Reports" />
         <Button fx:id="OnActionLogOut" layoutX="849.0" layoutY="420.0" mnemonicParsing="false" onAction="#OnActionLogOut" prefHeight="38.0" prefWidth="72.0" text="Log Out" />
-      <Button fx:id="OnActionExit1" alignment="CENTER" layoutX="849.0" layoutY="480.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Users" />
-        <Button fx:id="OnActionExit" alignment="CENTER" layoutX="849.0" layoutY="540.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Exit" />
+      <Button fx:id="OnActionUsers" alignment="CENTER" layoutX="849.0" layoutY="480.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#OnActionUsersContacts" prefHeight="50.0" prefWidth="72.0" text="Users +&#10;Contacts" textAlignment="CENTER" />
+        <Button fx:id="OnActionExit" alignment="CENTER" layoutX="849.0" layoutY="552.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Exit" />
     </children>
 </AnchorPane>

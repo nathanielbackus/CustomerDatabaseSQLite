@@ -148,11 +148,13 @@ public interface AppointmentDAO {
         return rowsAffected;
     }
     /**sql update to update an appointment with new data and with updateby information**/
-    public static int updateAppointment(int AppointmentID, String Title, String Description, String Location, String Type, LocalDateTime Start, LocalDateTime End, String UpdatedBy, int CustomerID, int UserID, int ContactID) throws SQLException {
-//        JDBC.openConnection();
-        String sql = "UPDATE appointments SET title = ?, description = ?, location = ?, type = ?, start = ?, end = ?, last_update = NOW(), last_updated_by = ?, customer_id = ?, user_id = ?, contact_id = ? WHERE appointment_id = ?";
+    public static int updateAppointment(int AppointmentID, String Title, String Description, String Location,
+                                        String Type, LocalDateTime Start, LocalDateTime End, String UpdatedBy, int
+                                                CustomerID, int UserID, int ContactID) throws SQLException {
+        String sql = "UPDATE appointments SET title = ?, description = ?, location = ?, type = ?, start = ?, end = ?, " +
+                "updatedOn = CURRENT_TIMESTAMP, updatedBy = ?, customer_id = ?, user_id = ?, contact_id = ? " +
+                "WHERE appointment_id = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(11, AppointmentID);
         ps.setString(1, Title);
         ps.setString(2, Description);
         ps.setString(3, Location);
@@ -169,6 +171,7 @@ public interface AppointmentDAO {
         ps.setInt(8, CustomerID);
         ps.setInt(9, UserID);
         ps.setInt(10, ContactID);
+        ps.setInt(11, AppointmentID);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
