@@ -44,7 +44,7 @@ public class CustomersAppointmentsController implements Initializable {
     @FXML
     void OnActionAddCustomer(ActionEvent event) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("AddCustomer.fxml"));
+        scene = FXMLLoader.load(getClass().getResource("Customer.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
     }
@@ -52,10 +52,10 @@ public class CustomersAppointmentsController implements Initializable {
     @FXML
     void OnActionUpdateCustomer(ActionEvent event) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("UpdateCustomer.fxml"));
+        loader.setLocation(getClass().getResource("Customer.fxml"));
         loader.load();
-        UpdateCustomerController UCController = loader.getController();
-        UCController.setCustomer(AllCustomersTableView.getSelectionModel().getSelectedItem());
+        CustomerController CController = loader.getController();
+        CController.setCustomer(AllCustomersTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
@@ -145,22 +145,7 @@ public class CustomersAppointmentsController implements Initializable {
         JDBC.closeConnection();
         System.exit(0);
     }
-    /**initialize loads all data for the tableviews, and holds toggleproperty for appointments in the next 7 days or 30 days
-     * <p>contains a lambda to add an eventlistener so a user can easily select between the appointmenttableview data:</p>
-     * <p>AppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {</p>
-     * <p>     if (newValue == null) {</p>
-     * <p>         return;</p>
-     * <p>     }</p>
-     * <p>     RadioButton selectedRadioButton = (RadioButton) newValue;</p>
-     * <p>     if (selectedRadioButton == AllAppointmentsRadio) {</p>
-     * <p>     AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(0));</p>
-     * <p>     } else if (selectedRadioButton == WeekAppointmentsRadio) {</p>
-     * <p>     AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(7));</p>
-     * <p>     } else if (selectedRadioButton == MonthAppointmentsRadio) {</p>
-     * <p>     AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(30));</p>
-     * <p>     }</p>
-     * <p>});</p>
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {

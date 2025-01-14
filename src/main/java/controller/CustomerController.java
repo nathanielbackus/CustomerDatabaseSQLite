@@ -1,5 +1,4 @@
 package controller;
-
 import dao.CountryDAO;
 import dao.CustomerDAO;
 import dao.CustomerDAOImpl;
@@ -20,7 +19,6 @@ import javafx.stage.Stage;
 import model.Country;
 import model.Customer;
 import model.Division;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -28,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-public class UpdateCustomerController implements Initializable {
+public class CustomerController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
@@ -39,13 +37,17 @@ public class UpdateCustomerController implements Initializable {
     @FXML
     private ComboBox<Division> DivisionComboBox;
     Customer CurrentCustomer;
-    /**load customerappointments scene**/
+    /**event to return to customer appointment**/
     @FXML
     void OnActionCustomerAppointments(ActionEvent event) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
+    }
+    @FXML
+    void OnActionLoadCountry(ActionEvent event){
+        return;
     }
     /**populate data fields with existing customer data**/
     public void setCustomer(Customer customer) throws SQLException {
@@ -77,11 +79,11 @@ public class UpdateCustomerController implements Initializable {
             }
         }
     }
-    /**save new data to database**/
+    /**collects data and saves it to customerDAO's addcustomer for sql insert**/
     @FXML
-    void OnActionSaveUpdatedCustomer(ActionEvent event) throws IOException, SQLException {
+    void OnActionSaveCustomer(ActionEvent event) throws IOException {
         try {
-            int CustomerID = Integer.parseInt(CustomerIDTextField.getText());
+            int CustomerID;
             String CustomerName = NameTextField.getText();
             String Address = AddressTextField.getText();
             String PostalCode = PostalCodeTextField.getText();
@@ -92,18 +94,26 @@ public class UpdateCustomerController implements Initializable {
                 return;
             }
             int DivisionID = selectedDivision.getDivisionID();
+            String CreatedBy = LoginController.UserLoggedIn();
             String UpdatedBy = LoginController.UserLoggedIn();
-            CustomerDAO.updateCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, UpdatedBy, DivisionID);
+            if (CustomerIDTextField.getText().isEmpty()) {
+                CustomerID = CustomerDAOImpl.CustomerGenerateID();
+                CustomerIDTextField.setText(String.valueOf(CustomerID));
+                CustomerDAO.addCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, CreatedBy, DivisionID);
+            } else {
+                CustomerID = Integer.parseInt(CustomerIDTextField.getText());
+                CustomerDAO.updateCustomer(CustomerID,CustomerName, Address, PostalCode, Phone, UpdatedBy, DivisionID);
+            }
             stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));
             stage.setScene(new Scene(scene));
         } catch (NumberFormatException e){
-            JDBC.ErrorMessage("Input Error", "Error in updating customer due to incorrect input", "Please enter valid values for each text field.");
+            JDBC.ErrorMessage("Input Error", "Error in adding customer due to incorrect input", "Please enter valid values for each text field.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    /**populate comboboxes with data of a country or division**/
+    /**populates the comboboxes first with the name of the country then the divisions belonging to the country**/
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
