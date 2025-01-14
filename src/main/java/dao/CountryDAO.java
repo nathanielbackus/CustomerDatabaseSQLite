@@ -16,7 +16,7 @@ public class CountryDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int CountryID = rs.getInt("Country_ID");
-                String CountryName = rs.getString("Country");
+                String CountryName = rs.getString("Country_name");
                 Country country = new Country(CountryID, CountryName);
                 countries.add(country);
             }

@@ -17,7 +17,6 @@ public abstract class AppointmentDAOImpl implements AppointmentDAO{
     /**collect the data on all appointments in the database**/
     public static void loadAllAppointments() throws SQLException {
         allAppointments.clear();
-        JDBC.openConnection();
         String sql = "SELECT * FROM appointments;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();

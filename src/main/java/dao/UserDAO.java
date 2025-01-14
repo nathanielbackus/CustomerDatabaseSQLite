@@ -13,25 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    //RANDOM SHENANIGANS I CAN RETURN TO FOR USER STUFF
-//    public static ObservableList<User> allUsers = FXCollections.observableArrayList();
-//    public static void loadAllUsers() throws SQLException {
-//        allUsers.clear();
-//        JDBC.openConnection();
-//        String sql = "SELECT * FROM USERS";
-//        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-//        ResultSet rs = ps.executeQuery();
-//        while (rs.next()) {
-//            int userID = rs.getInt("user_ID");
-//            String username = rs.getString("username");
-//            String password = rs.getString("password");
-//            User user = new User(userID, username, password);
-//            allUsers.add(user);
-//        }
-//    }
-//    public static ObservableList<Customer> getAllCustomers() {
-//        return allCustomers;
-//    }
     //puts all users in a array
     public static List<User> getAllUsers() throws SQLException{
         List<User> userReturnList = new ArrayList<>();
@@ -42,8 +23,7 @@ public class UserDAO {
                 int userID = rs.getInt("user_id");
                 String username = rs.getString("username");
                 String password = rs.getString("password");
-                User user = new User(
-                        userID, username, password);
+                User user = new User(userID, username, password);
                 userReturnList.add(user);
             }
         } catch (SQLException e) {
@@ -54,7 +34,7 @@ public class UserDAO {
     }
     //add
     public static int addUser(int userID, String username, String password, String CreatedBy) throws SQLException {
-        JDBC.openConnection();
+//        JDBC.openConnection();
         String sql = "INSERT INTO users (user_ID, username, password, Create_Date, Created_By) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, userID);

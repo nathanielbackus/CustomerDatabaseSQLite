@@ -57,28 +57,6 @@ public abstract class JDBC {
             );
         """;
 
-        String createAppointmentsTable = """
-            CREATE TABLE IF NOT EXISTS appointments (
-                appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                customer_id INTEGER NOT NULL,
-                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-                user_id INTEGER NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
-                contact_id INTEGER NOT NULL,
-                FOREIGN KEY (contact_id) REFERENCES contacts(contact_id)
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                location TEXT NOT NULL,
-                type TEXT NOT NULL,
-                start DATETIME NOT NULL,
-                end DATETIME NOT NULL,
-                createdOn DATETIME NOT NULL,
-                createdBy TEXT NOT NULL,
-                updatedOn DATETIME NOT NULL,
-                updatedBy TEXTNOT NULL
-            );
-        """;
-
         String createContactsTable = """
             CREATE TABLE IF NOT EXISTS contacts (
                 contact_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,8 +65,31 @@ public abstract class JDBC {
             );
         """;
 
+        String createAppointmentsTable = """
+            CREATE TABLE IF NOT EXISTS appointments (
+            appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            contact_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            location TEXT NOT NULL,
+            type TEXT NOT NULL,
+            start DATETIME NOT NULL,
+            end DATETIME NOT NULL,
+            createdOn DATETIME NOT NULL,
+            createdBy TEXT NOT NULL,
+            updatedOn DATETIME NOT NULL,
+            updatedBy TEXT NOT NULL,
+            FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+            FOREIGN KEY (user_id) REFERENCES users(user_id),
+            FOREIGN KEY (contact_id) REFERENCES contacts(contact_id)
+            );
+        """;
+
+
         String createCountryTable = """
-            CREATE TABLE IF NOT EXISTS country (
+            CREATE TABLE IF NOT EXISTS countries (
                 country_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 country_name TEXT NOT NULL,
                 createdOn DATETIME NOT NULL,
@@ -104,11 +105,29 @@ public abstract class JDBC {
                 customer_name TEXT NOT NULL,
                 address TEXT NOT NULL,
                 postal_code TEXT NOT NULL,
-                phone TEXT NOT NULL
+                phone TEXT NOT NULL,
+                createdBy TEXT,
+                createdOn DATETIME,
+                updatedBy TEXT,
+                updatedOn DATETIME,
+                division_id INTEGER NOT NULL,
+                FOREIGN KEY (division_id) REFERENCES divisions(division_id)
             );
         """;
 
         //division
+        String createDivisionsTable = """
+            CREATE TABLE IF NOT EXISTS divisions (
+                division_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                division TEXT NOT NULL,
+                createOn DATETIME NOT NULL,
+                createdBy TEXT NOT NULL,
+                updatedOn DATETIME NOT NULL,
+                updatedBy TEXT NOT NULL,
+                country_id INTEGER NOT NULL,
+                FOREIGN KEY (country_id) REFERENCES countries(country_id)
+            );
+        """;
 
         //reportcontact
 
@@ -119,7 +138,12 @@ public abstract class JDBC {
         //relational tables?
 
         try (Statement stmt = connection.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON;");
+            System.out.println("Foreign key constraints enabled.");
             stmt.execute(createUsersTable);
+            stmt.execute(createContactsTable);
+            stmt.execute(createCountryTable);
+            stmt.execute(createDivisionsTable);
             stmt.execute(createCustomersTable);
             stmt.execute(createAppointmentsTable);
             System.out.println("Database schema initialized.");
@@ -168,4 +192,101 @@ public abstract class JDBC {
         ZonedDateTime estZonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("America/New_York"));
         return estZonedDateTime.toLocalTime();
     }
+
+
+    //prepopulates first creation of database with country and division data once
+    public static String populateCountry() {
+        String sql = "INSERT INTO countries (Country_ID, Country_name, CreatedOn, CreatedBy, UpdatedOn, UpdatedBy) VALUES " +
+                "(1, 'U.S', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script'), " +
+                "(2, 'UK', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script'), " +
+                "(3, 'Canada', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script')";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return "Country tables successfully populated";
+    }
+
+    public static String populateDivision() {
+        String sql =
+                "INSERT INTO divisions (division_ID, division, createOn, createdBy, updatedOn, updatedBy, country_ID) VALUES" +
+                "(1, 'Alabama', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(2, 'Arizona', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(3, 'Arkansas', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(4, 'California', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(5, 'Colorado', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(6, 'Connecticut', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(7, 'Delaware', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(8, 'District of Columbia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(9, 'Florida', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(10, 'Georgia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(11, 'Idaho', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(12, 'Illinois', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(13, 'Indiana', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(14, 'Iowa', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(15, 'Kansas', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(16, 'Kentucky', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(17, 'Louisiana', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(18, 'Maine', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(19, 'Maryland', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(20, 'Massachusetts', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(21, 'Michigan', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(22, 'Minnesota', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(23, 'Mississippi', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(24, 'Missouri', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1)," +
+                "(25, 'Montana', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(26, 'Nebraska', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(27, 'Nevada', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(28, 'New Hampshire', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(29, 'New Jersey', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(30, 'New Mexico', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(31, 'New York', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(32, 'North Carolina', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(33, 'North Dakota', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(34, 'Ohio', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(35, 'Oklahoma', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(36, 'Oregon', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(37, 'Pennsylvania', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(38, 'Rhode Island', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(39, 'South Carolina', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(40, 'South Dakota', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(41, 'Tennessee', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(42, 'Texas', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(43, 'Utah', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(44, 'Vermont', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(45, 'Virginia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(46, 'Washington', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(47, 'West Virginia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(48, 'Wisconsin', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(49, 'Wyoming', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(52, 'Hawaii', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(54, 'Alaska', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 1), " +
+                "(60, 'Northwest Territories', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(61, 'Alberta', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(62, 'British Columbia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(63, 'Manitoba', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(64, 'New Brunswick', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(65, 'Nova Scotia', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(66, 'Prince Edward Island', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3)," +
+                "(67, 'Ontario', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(68, 'Québec', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(69, 'Saskatchewan', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(70, 'Nunavut', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(71, 'Yukon', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(72, 'Newfoundland and Labrador', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 3), " +
+                "(101, 'England', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 2), " +
+                "(102, 'Wales', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 2), " +
+                "(103, 'Scotland', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 2), " +
+                "(104, 'Northern Ireland', '2024-06-09 17:16:00', 'script', '2024-06-09 17:16:00', 'script', 2);";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return "Division tables successfully populated";
+    }
+
 }

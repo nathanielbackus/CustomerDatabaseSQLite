@@ -62,7 +62,7 @@ public class AddCustomerController implements Initializable {
             }
             int DivisionID = selectedDivision.getDivisionID();
             String CreatedBy = LoginController.UserLoggedIn();
-            CustomerDAO.addCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, DivisionID, CreatedBy);
+            CustomerDAO.addCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, CreatedBy, DivisionID);
             stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));
             stage.setScene(new Scene(scene));
@@ -82,17 +82,7 @@ public class AddCustomerController implements Initializable {
                 if (newValue != null) {
                     ObservableList<Division> divisions = FXCollections.observableArrayList();
                     int countryId = newValue.getCountryID();
-                    switch (countryId) {
-                        case 1:
-                            divisions = DivisionDAO.getAllUSDivisions();
-                            break;
-                        case 2:
-                            divisions = DivisionDAO.getAllUKDivisions();
-                            break;
-                        case 3:
-                            divisions = DivisionDAO.getAllCADivisions();
-                            break;
-                    }
+                    divisions = DivisionDAO.getSelectedDivisions(countryId);
                     AddDivisionComboBox.setItems(divisions);
                 }
             });

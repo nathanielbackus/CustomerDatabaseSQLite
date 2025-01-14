@@ -17,7 +17,6 @@ public class ContactDAOImpl {
     /**retrieves contact data from database**/
     public static void loadAllContacts() throws SQLException {
         allContacts.clear();
-        JDBC.openConnection();
         String sql = "SELECT * FROM contacts";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();

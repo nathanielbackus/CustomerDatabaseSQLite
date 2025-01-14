@@ -49,7 +49,6 @@ public class UpdateCustomerController implements Initializable {
     }
     /**populate data fields with existing customer data**/
     public void setCustomer(Customer customer) throws SQLException {
-        JDBC.openConnection();
         CurrentCustomer = customer;
         CustomerIDTextField.setText(String.valueOf(customer.getCustomerID()));
         NameTextField.setText(customer.getCustomerName());
@@ -57,7 +56,7 @@ public class UpdateCustomerController implements Initializable {
         PostalCodeTextField.setText(customer.getPostalCode());
         PhoneTextField.setText(customer.getPhone());
         CountryComboBox.getItems();
-        String sql = "SELECT country_ID FROM first_level_divisions WHERE division_id = ?";
+        String sql = "SELECT country_ID FROM divisions WHERE division_id = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, customer.getDivisionID());
         ResultSet rs = ps.executeQuery();
@@ -94,7 +93,7 @@ public class UpdateCustomerController implements Initializable {
             }
             int DivisionID = selectedDivision.getDivisionID();
             String UpdatedBy = LoginController.UserLoggedIn();
-            CustomerDAO.updateCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, DivisionID, UpdatedBy);
+            CustomerDAO.updateCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, UpdatedBy, DivisionID);
             stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));
             stage.setScene(new Scene(scene));
@@ -114,17 +113,7 @@ public class UpdateCustomerController implements Initializable {
                 if (newValue != null) {
                     ObservableList<Division> divisions = FXCollections.observableArrayList();
                     int countryId = newValue.getCountryID();
-                    switch (countryId) {
-                        case 1:
-                            divisions = DivisionDAO.getAllUSDivisions();
-                            break;
-                        case 2:
-                            divisions = DivisionDAO.getAllUKDivisions();
-                            break;
-                        case 3:
-                            divisions = DivisionDAO.getAllCADivisions();
-                            break;
-                    }
+                    divisions = DivisionDAO.getSelectedDivisions(countryId);
                     DivisionComboBox.setItems(divisions);
                 }
             });

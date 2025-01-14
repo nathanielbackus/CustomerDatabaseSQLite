@@ -10,49 +10,50 @@
 <?import javafx.scene.shape.Line?>
 
 <AnchorPane prefHeight="643.0" prefWidth="962.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomersAppointmentsController">
-   <children>
-      <TableView fx:id="AllAppointmentsTableView" layoutX="13.0" layoutY="62.0" prefHeight="250.0" prefWidth="931.0">
-        <columns>
-          <TableColumn fx:id="AppointmentsTBID" prefWidth="48.131869316101074" text="ID" />
-          <TableColumn fx:id="AppointmentsTBTitle" prefWidth="109.77470779418945" text="Title" />
-            <TableColumn fx:id="AppointmentsTBDesc" prefWidth="104.72531127929688" text="Description" />
-            <TableColumn fx:id="AppointmentsTBLocation" minWidth="0.0" prefWidth="85.59893798828125" text="Location" />
-            <TableColumn fx:id="AppointmentsTBType" prefWidth="94.0714111328125" text="Type" />
-            <TableColumn fx:id="AppointmentsTBStart" prefWidth="97.9285888671875" text="Start Date" />
-            <TableColumn fx:id="AppointmentsTBEnd" prefWidth="92.57147216796875" text="End Date" />
-            <TableColumn fx:id="AppointmentsTBCustomerID" prefWidth="80.752685546875" text="Customer ID" />
-            <TableColumn fx:id="AppointmentsTBUserID" prefWidth="91.747314453125" text="User ID" />
-            <TableColumn fx:id="AppointmentsTBContact" prefWidth="130.43963623046875" text="Contact" />
-        </columns>
-      </TableView>
-      <TableView fx:id="AllCustomersTableView" layoutX="15.0" layoutY="379.0" prefHeight="250.0" prefWidth="773.0">
-        <columns>
-          <TableColumn fx:id="CustomerTBID" prefWidth="34.69780349731445" text="ID" />
-          <TableColumn fx:id="CustomerTBName" prefWidth="150.90660858154297" text="Name" />
-            <TableColumn fx:id="CustomerTBAddress" prefWidth="234.0933837890625" text="Address" />
-            <TableColumn fx:id="CustomerTBPostalCode" prefWidth="78.11541748046875" text="Postal Code" />
-            <TableColumn fx:id="CustomerTBPhone" prefWidth="127.71429443359375" text="Phone" />
-            <TableColumn fx:id="CustomerTBDivisionID" prefWidth="149.41766357421875" text="State/Province" />
-        </columns>
-      </TableView>
-      <Line endX="829.5" layoutX="115.0" layoutY="322.0" opacity="0.21" startX="-100.0" />
-      <Button fx:id="OnActionReports" layoutX="849.0" layoutY="360.0" mnemonicParsing="false" onAction="#OnActionReports" prefHeight="38.0" prefWidth="72.0" text="Reports" />
-      <Button fx:id="OnActionLogOut" layoutX="849.0" layoutY="420.0" mnemonicParsing="false" onAction="#OnActionLogOut" prefHeight="38.0" prefWidth="72.0" text="Log Out" />
-      <Button fx:id="OnActionExit" alignment="CENTER" layoutX="849.0" layoutY="480.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Exit" />
-      <Button fx:id="OnActionDeleteCustomer" layoutX="730.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionDeleteCustomer" prefHeight="26.0" prefWidth="58.0" text="Delete" />
-      <Button fx:id="OnActionEditCustomer" layoutX="650.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionUpdateCustomer" prefHeight="26.0" prefWidth="58.0" text="Edit" />
-      <Button fx:id="OnActionAddCustomer" layoutX="570.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionAddCustomer" prefHeight="26.0" prefWidth="59.0" text="Add" />
-      <Line endX="685.1286010742188" endY="-9.5" layoutX="125.0" layoutY="332.0" opacity="0.21" startX="685.1286010742188" startY="295.21337890625" />
-      <Button fx:id="OnActionDeleteAppointment" layoutX="886.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionDeleteAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
-      <Button fx:id="OnActionEditAppointment" layoutX="806.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionUpdateAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
-      <Button fx:id="OnActionAddAppointment" layoutX="726.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionAddAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
-      <Label layoutX="15.0" layoutY="18.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Appointments" />
-      <Label layoutX="13.0" layoutY="334.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Customers" />
-      <RadioButton fx:id="WeekAppointmentsRadio" layoutX="367.0" layoutY="29.0" mnemonicParsing="false" text="Appointments This Week">
+    <children>
+        <Label layoutX="15.0" layoutY="18.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Appointments" />
+        <RadioButton fx:id="AllAppointmentsRadio" layoutX="243.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="All Appointments">
          <toggleGroup>
-            <ToggleGroup fx:id="AppointmentsTG" />
+                <ToggleGroup fx:id="AppointmentsTG" />
          </toggleGroup></RadioButton>
-      <RadioButton fx:id="AllAppointmentsRadio" layoutX="243.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="All Appointments" toggleGroup="$AppointmentsTG" />
-      <RadioButton fx:id="MonthAppointmentsRadio" layoutX="533.0" layoutY="29.0" mnemonicParsing="false" text="Appointments This Month" toggleGroup="$AppointmentsTG" />
-   </children>
+        <RadioButton fx:id="WeekAppointmentsRadio" layoutX="367.0" layoutY="29.0" mnemonicParsing="false" text="Appointments This Week" toggleGroup="$AppointmentsTG" />
+        <RadioButton fx:id="MonthAppointmentsRadio" layoutX="533.0" layoutY="29.0" mnemonicParsing="false" text="Appointments This Month" toggleGroup="$AppointmentsTG" />
+        <Button fx:id="OnActionAddAppointment" layoutX="726.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionAddAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
+        <Button fx:id="OnActionEditAppointment" layoutX="806.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionUpdateAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+        <Button fx:id="OnActionDeleteAppointment" layoutX="886.0" layoutY="24.0" mnemonicParsing="false" onAction="#OnActionDeleteAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+        <TableView fx:id="AllAppointmentsTableView" layoutX="13.0" layoutY="62.0" prefHeight="250.0" prefWidth="931.0">
+            <columns>
+                <TableColumn fx:id="AppointmentsTBID" prefWidth="48.131869316101074" text="ID" />
+                <TableColumn fx:id="AppointmentsTBTitle" prefWidth="109.77470779418945" text="Title" />
+                <TableColumn fx:id="AppointmentsTBDesc" prefWidth="104.72531127929688" text="Description" />
+                <TableColumn fx:id="AppointmentsTBLocation" minWidth="0.0" prefWidth="85.59893798828125" text="Location" />
+                <TableColumn fx:id="AppointmentsTBType" prefWidth="94.0714111328125" text="Type" />
+                <TableColumn fx:id="AppointmentsTBStart" prefWidth="97.9285888671875" text="Start Date" />
+                <TableColumn fx:id="AppointmentsTBEnd" prefWidth="92.57147216796875" text="End Date" />
+                <TableColumn fx:id="AppointmentsTBCustomerID" prefWidth="80.752685546875" text="Customer ID" />
+                <TableColumn fx:id="AppointmentsTBUserID" prefWidth="91.747314453125" text="User ID" />
+                <TableColumn fx:id="AppointmentsTBContact" prefWidth="130.43963623046875" text="Contact" />
+            </columns>
+        </TableView>
+        <Line endX="829.5" layoutX="115.0" layoutY="322.0" opacity="0.21" startX="-100.0" />
+        <Label layoutX="13.0" layoutY="334.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Customers" />
+        <Button fx:id="OnActionAddCustomer" layoutX="570.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionAddCustomer" prefHeight="26.0" prefWidth="59.0" text="Add" />
+        <Button fx:id="OnActionEditCustomer" layoutX="650.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionUpdateCustomer" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+        <Button fx:id="OnActionDeleteCustomer" layoutX="730.0" layoutY="340.0" mnemonicParsing="false" onAction="#OnActionDeleteCustomer" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+        <TableView fx:id="AllCustomersTableView" layoutX="15.0" layoutY="379.0" prefHeight="250.0" prefWidth="773.0">
+            <columns>
+                <TableColumn fx:id="CustomerTBID" prefWidth="34.69780349731445" text="ID" />
+                <TableColumn fx:id="CustomerTBName" prefWidth="150.90660858154297" text="Name" />
+                <TableColumn fx:id="CustomerTBAddress" prefWidth="234.0933837890625" text="Address" />
+                <TableColumn fx:id="CustomerTBPostalCode" prefWidth="78.11541748046875" text="Postal Code" />
+                <TableColumn fx:id="CustomerTBPhone" prefWidth="127.71429443359375" text="Phone" />
+                <TableColumn fx:id="CustomerTBDivisionID" prefWidth="149.41766357421875" text="State/Province" />
+            </columns>
+        </TableView>
+        <Line endX="685.1286010742188" endY="-9.5" layoutX="125.0" layoutY="332.0" opacity="0.21" startX="685.1286010742188" startY="295.21337890625" />
+        <Button fx:id="OnActionReports" layoutX="849.0" layoutY="360.0" mnemonicParsing="false" onAction="#OnActionReports" prefHeight="38.0" prefWidth="72.0" text="Reports" />
+        <Button fx:id="OnActionLogOut" layoutX="849.0" layoutY="420.0" mnemonicParsing="false" onAction="#OnActionLogOut" prefHeight="38.0" prefWidth="72.0" text="Log Out" />
+      <Button fx:id="OnActionExit1" alignment="CENTER" layoutX="849.0" layoutY="480.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Users" />
+        <Button fx:id="OnActionExit" alignment="CENTER" layoutX="849.0" layoutY="540.0" mnemonicParsing="false" onAction="#OnActionExit" prefHeight="38.0" prefWidth="72.0" text="Exit" />
+    </children>
 </AnchorPane>

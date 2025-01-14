@@ -21,7 +21,7 @@ public abstract class CustomerDAOImpl implements CustomerDAO {
     private List<Customer> customer;
     public static void loadAllCustomers() throws SQLException {
         allCustomers.clear();
-        JDBC.openConnection();
+//        JDBC.openConnection();
         String sql = "SELECT * FROM CUSTOMERS";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();

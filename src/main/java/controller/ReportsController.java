@@ -66,7 +66,6 @@ public class ReportsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ObservableList<Contact> contactsNameList = FXCollections.observableArrayList();
         try {
-            JDBC.openConnection();
             String sql = "SELECT * FROM Contacts";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();

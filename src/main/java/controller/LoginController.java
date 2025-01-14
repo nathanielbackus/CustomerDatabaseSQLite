@@ -1,5 +1,6 @@
 package controller;
 import dao.AppointmentDAO;
+import dao.CountryDAO;
 import dao.UserDAO;
 import helper.JDBC;
 import javafx.application.Application;
@@ -33,6 +34,7 @@ public class LoginController extends Application implements Initializable {
     Stage stage;
     Parent scene;
     UserDAO userDAO = new UserDAO();
+    CountryDAO countryDAO = new CountryDAO();
     private static String UserLoggedIn;
     private static int UserIDLoggedIn;
     @FXML
@@ -72,7 +74,6 @@ public class LoginController extends Application implements Initializable {
             alert.showAndWait();
         } else {
             boolean isAuthenticated = false;
-            JDBC.openConnection();
             userDAO.getAllUsers();
             String UsernameEntered = UserNameTextField.getText();
             String PasswordEntered = PasswordTextField.getText();
@@ -84,6 +85,10 @@ public class LoginController extends Application implements Initializable {
                 String filename = "login_activity.txt", item;
                 FileWriter fwriter = new FileWriter(filename, true);
                 PrintWriter outputFile = new PrintWriter(fwriter);
+                if (countryDAO.getAllCountries().isEmpty()){
+                    JDBC.populateCountry();
+                    JDBC.populateDivision();
+                }
                 item = "Successful Login and First User Creation: " + UsernameEntered + " on " + LocalDate.now() + " at " + LocalTime.now();
                 outputFile.println(item);
                 outputFile.close();
@@ -159,7 +164,7 @@ public class LoginController extends Application implements Initializable {
         return UserLoggedIn;
     }
     public static int UserIDLoggedIn() throws SQLException {
-        String sql = "SELECT user_id FROM users WHERE user_name = ?";
+        String sql = "SELECT user_id FROM users WHERE username = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, UserLoggedIn);
         ResultSet rs = ps.executeQuery();

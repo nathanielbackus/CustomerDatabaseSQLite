@@ -14,31 +14,29 @@ public interface CustomerDAO {
     }
     public Customer getCustomer(int CustomerID);
     /**inserts customer into sql database**/
-    public static int addCustomer(int CustomerID, String CustomerName, String Address, String PostalCode, String Phone, int DivisionID, String CreatedBy) throws SQLException {
-        JDBC.openConnection();
-        String sql = "INSERT INTO CUSTOMERS (Customer_ID, Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
+    public static int addCustomer(int CustomerID, String CustomerName, String Address, String PostalCode, String Phone, String CreatedBy, int DivisionID) throws SQLException {
+        String sql = "INSERT INTO CUSTOMERS (Customer_ID, Customer_Name, Address, Postal_Code, Phone, createdBy, CreatedOn, Division_ID) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, CustomerID);
         ps.setString(2, CustomerName);
         ps.setString(3, Address);
         ps.setString(4, PostalCode);
         ps.setString(5, Phone);
-        ps.setInt(6, DivisionID);
-        ps.setString(7, CreatedBy);
+        ps.setString(6, CreatedBy);
+        ps.setInt(7, DivisionID);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
     /**updates customer in database**/
-    public static int updateCustomer(int CustomerID, String CustomerName, String Address, String PostalCode, String Phone, int DivisionID, String UpdatedBy) throws SQLException {
-        JDBC.openConnection();
-        String sql = "UPDATE customers SET customer_name = ?, address = ?, postal_code = ?, phone = ?, division_id = ?, Last_Update = NOW(), Last_Updated_By = ? WHERE customer_id = ?";
+    public static int updateCustomer(int CustomerID, String CustomerName, String Address, String PostalCode, String Phone, String UpdatedBy, int DivisionID) throws SQLException {
+        String sql = "UPDATE customers SET customer_name = ?, address = ?, postal_code = ?, phone = ?, updatedBy = ?, updatedOn = CURRENT_TIMESTAMP, division_id = ? WHERE customer_id = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, CustomerName);
         ps.setString(2, Address);
         ps.setString(3, PostalCode);
         ps.setString(4, Phone);
-        ps.setInt(5, DivisionID);
-        ps.setString(6, UpdatedBy);
+        ps.setString(5, UpdatedBy);
+        ps.setInt(6, DivisionID);
         ps.setInt(7, CustomerID);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
