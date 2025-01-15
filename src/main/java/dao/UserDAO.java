@@ -35,7 +35,7 @@ public class UserDAO {
     //add
     public static int addUser(int userID, String username, String password, String CreatedBy) throws SQLException {
 //        JDBC.openConnection();
-        String sql = "INSERT INTO users (user_ID, username, password, Create_Date, Created_By) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
+        String sql = "INSERT INTO users (user_ID, username, password, createdOn, CreatedBy) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, userID);
         ps.setString(2, username);
@@ -45,9 +45,31 @@ public class UserDAO {
         return rowsAffected;
     }
     //update
-
+    public static int updateUser(int user, String username, String password, String updatedBy) throws SQLException {
+        String sql = "UPDATE users SET username = ?, password = ?, updatedBy = ?, updatedOn = CURRENT_TIMESTAMP WHERE user_id = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, username);
+        ps.setString(2, password);
+        ps.setString(3, updatedBy);
+        ps.setInt(4, user);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
+    }
     //delete
-
+    public static boolean deleteUser(User selectedUser) throws SQLException {
+//        if (selectedUser != null && CustomerDAOImpl.allCustomers.contains(selectedCustomer)) {
+//            int customerID = selectedCustomer.getCustomerID();
+//            String sql = "DELETE FROM customers WHERE Customer_ID = ?;";
+//            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+//            ps.setInt(1, customerID);
+//            int rowsAffected = ps.executeUpdate();
+//            if (rowsAffected > 0) {
+//                allCustomers.remove(selectedCustomer);
+//                return true;
+//            }
+//        }
+        return false;
+    }
     //generate id
     public static int userGenerateID() throws SQLException {
         int maxNumber = 0;

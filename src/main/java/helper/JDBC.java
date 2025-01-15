@@ -52,8 +52,10 @@ public abstract class JDBC {
                 user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
-                Create_Date DATETIME NOT NULL,
-                created_by TEXT NOT NULL
+                createdOn DATETIME,
+                createdBy TEXT,
+                updatedOn DATETIME,
+                updatedBy TEXT
             );
         """;
 

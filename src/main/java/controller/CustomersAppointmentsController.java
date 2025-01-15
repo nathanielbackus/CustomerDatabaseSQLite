@@ -157,12 +157,12 @@ public class CustomersAppointmentsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            CustomerDAOImpl.loadAllCustomers();
-            AppointmentDAOImpl.loadAllAppointments();
+            CustomerDAO.loadAllCustomers();
+            AppointmentDAO.loadAllAppointments();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        AllCustomersTableView.setItems(CustomerDAOImpl.getAllCustomers());
+        AllCustomersTableView.setItems(CustomerDAO.getAllCustomers());
         CustomerTBID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         CustomerTBAddress.setCellValueFactory(new PropertyValueFactory<>("Address"));
         CustomerTBDivisionID.setCellValueFactory(new PropertyValueFactory<>("DivisionID"));
@@ -176,14 +176,14 @@ public class CustomersAppointmentsController implements Initializable {
             }
             RadioButton selectedRadioButton = (RadioButton) newValue;
             if (selectedRadioButton == AllAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(0));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
             } else if (selectedRadioButton == WeekAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(7));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(7));
             } else if (selectedRadioButton == MonthAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(30));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(30));
             }
         });
-        AllAppointmentsTableView.setItems(AppointmentDAOImpl.getAllAppointments(0));
+        AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
         AppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
         AppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         AppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));

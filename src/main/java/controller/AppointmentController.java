@@ -150,7 +150,7 @@ public class AppointmentController implements Initializable {
             String UpdatedBy = LoginController.UserLoggedIn();
             int appointmentID;
             if (AppointmentIDTextField.getText().isEmpty()) {
-                appointmentID = AppointmentDAOImpl.AppointmentGenerateID();
+                appointmentID = AppointmentDAO.AppointmentGenerateID();
                 AppointmentIDTextField.setText(String.valueOf(appointmentID));
                 AppointmentDAO.addAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, CreatedBy, customerID, userID, contactID);
             } else{
@@ -172,11 +172,11 @@ public class AppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ContactDAOImpl.loadAllContacts();
+            ContactDAO.loadAllContacts();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        ObservableList<Contact> contacts = ContactDAOImpl.getAllContacts();
+        ObservableList<Contact> contacts = ContactDAO.getAllContacts();
         ContactComboBox.setItems(contacts);
         /**populate times in comboboxes**/
         String timeslots[] =

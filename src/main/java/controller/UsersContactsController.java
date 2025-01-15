@@ -1,6 +1,7 @@
 package controller;
 
-import dao.CustomerDAO;
+import dao.ContactDAO;
+import dao.UserDAO;
 import helper.JDBC;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,17 +10,19 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Contact;
-import model.Customer;
 import model.User;
 
-import javax.swing.text.TableView;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.ResourceBundle;
+
 //ADD SCENES FOR CONTACT AND USER!!
 //ADD DAO FOR CONTAVT AND USER!!
 public class UsersContactsController implements Initializable {
@@ -59,7 +62,7 @@ public class UsersContactsController implements Initializable {
         Contact selectedContact = AllContactsTableView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
             int contactID = selectedContact.getContactID();
-            String sql = "SELECT * FROM contacts WHERE contact_ID = ?;";
+            String sql = "SELECT * FROM appointments WHERE contact_ID = ?;";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setInt(1, contactID);
             ResultSet rowsAffected = ps.executeQuery();
@@ -69,7 +72,7 @@ public class UsersContactsController implements Initializable {
                 alert.setHeaderText("Are you sure you want to delete the selected contact?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    ContactDAO.deleteContact(selectedContact);
+//                    ContactDAO.deleteContact(selectedContact);
                 } else if (result.get() == ButtonType.CANCEL) {
                     return;
                 }
@@ -78,6 +81,63 @@ public class UsersContactsController implements Initializable {
             }
         }
     }
+    @FXML
+    void OnActionAddUser(ActionEvent event) throws IOException {
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("User.fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+    @FXML
+    void OnActionEditUser(ActionEvent event) throws IOException {
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("User.fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+    @FXML
+    public void OnActionDeleteUser(ActionEvent event) throws IOException, SQLException {
+        User selectedUser = AllUsersTableView.getSelectionModel().getSelectedItem();
+        if (selectedUser != null) {
+            int userID = selectedUser.getUserID();
+            String sql = "SELECT * FROM appointments WHERE user_ID = ?;";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ResultSet rowsAffected = ps.executeQuery();
+            if (!rowsAffected.next()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Delete User?");
+                alert.setHeaderText("Are you sure you want to delete the selected user?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    UserDAO.deleteUser(selectedUser);
+                } else if (result.get() == ButtonType.CANCEL) {
+                    return;
+                }
+            } else if(userID == LoginController.UserIDLoggedIn()) {
+                JDBC.ErrorMessage("Error Deleting User", "User is logged in.", "Please log into a different user account to delete this user.");
+            }else {
+                JDBC.ErrorMessage("Error Deleting USer", "Appointment associated with  user", "Please delete all appointments associated with this user before trying to delete them again.");
+            }
+        }
+    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle){
+        try {
+            ContactDAO.loadAllContacts();
+            UserDAO.loadAllUsers();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        AllContactsTableView.setItems(ContactDAO.getAllContacts());
+        ContactsTBID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+        ContactsTBName.setCellValueFactory(new PropertyValueFactory<>("ContactName"));
+        ContactsTBEmail.setCellValueFactory(new PropertyValueFactory<>("Email"));
+        AllUsersTableView.setItems(UserDAO.getAllUsers());
+        UserTBID.setCellValueFactory(new PropertyValueFactory<>("userID"));
+        UserTBUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+        UserTBPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
 
+    }
 }

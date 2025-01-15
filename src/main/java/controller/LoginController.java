@@ -192,29 +192,25 @@ public class LoginController extends Application implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         JDBC.openConnection();
-        try {
-            if (userDAO.getAllUsers().isEmpty()) {
-                isNewUser = true;
-                UsernameLabel.setText(rb.getString("FirstUsername"));
-                PasswordLabel.setText(rb.getString("FirstPassword"));
-                CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
-                LoginButton.setText(rb.getString("CreateUser"));
-                ExitButton.setText(rb.getString("Exit"));
-                setLocationLabel();
-            } else {
-                isNewUser = false;
-                UsernameLabel.setText(rb.getString("Username"));
-                PasswordLabel.setText(rb.getString("Password"));
-                CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
-                LoginButton.setText(rb.getString("Login"));
-                ExitButton.setText(rb.getString("Exit"));
-                setLocationLabel();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (userDAO.getAllUsers().isEmpty()) {
+            isNewUser = true;
+            UsernameLabel.setText(rb.getString("FirstUsername"));
+            PasswordLabel.setText(rb.getString("FirstPassword"));
+            CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
+            LoginButton.setText(rb.getString("CreateUser"));
+            ExitButton.setText(rb.getString("Exit"));
+            setLocationLabel();
+        } else {
+            isNewUser = false;
+            UsernameLabel.setText(rb.getString("Username"));
+            PasswordLabel.setText(rb.getString("Password"));
+            CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
+            LoginButton.setText(rb.getString("Login"));
+            ExitButton.setText(rb.getString("Exit"));
+            setLocationLabel();
         }
     }
-    public static void main(String[] args){
+    public static void main(String[] args) throws SQLException {
         launch(args);
         JDBC.openConnection();
     }

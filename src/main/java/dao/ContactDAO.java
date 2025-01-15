@@ -4,7 +4,6 @@ import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Contact;
-import model.Customer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactDAOImpl {
+public class ContactDAO {
     private List<Contact> contact;
     /**retrieves contact data from database**/
     public static void loadAllContacts() throws SQLException {
@@ -33,7 +32,7 @@ public class ContactDAOImpl {
     public static ObservableList<Contact> getAllContacts() {
         return allContacts;
     }
-    public ContactDAOImpl() throws SQLException {
+    public ContactDAO() throws SQLException {
         contact = new ArrayList<Contact>();
         loadAllContacts();
     }

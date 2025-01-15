@@ -1,7 +1,6 @@
 package controller;
 import dao.CountryDAO;
 import dao.CustomerDAO;
-import dao.CustomerDAOImpl;
 import dao.DivisionDAO;
 import helper.JDBC;
 import javafx.collections.FXCollections;
@@ -97,7 +96,7 @@ public class CustomerController implements Initializable {
             String CreatedBy = LoginController.UserLoggedIn();
             String UpdatedBy = LoginController.UserLoggedIn();
             if (CustomerIDTextField.getText().isEmpty()) {
-                CustomerID = CustomerDAOImpl.CustomerGenerateID();
+                CustomerID = CustomerDAO.CustomerGenerateID();
                 CustomerIDTextField.setText(String.valueOf(CustomerID));
                 CustomerDAO.addCustomer(CustomerID, CustomerName, Address, PostalCode, Phone, CreatedBy, DivisionID);
             } else {
