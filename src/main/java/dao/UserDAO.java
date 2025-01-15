@@ -29,9 +29,9 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return userReturnList;
-    }
+    }//need to make a alluserslist with a listener or something
+
     //add
     public static int addUser(int userID, String username, String password, String CreatedBy) throws SQLException {
 //        JDBC.openConnection();
@@ -57,18 +57,12 @@ public class UserDAO {
     }
     //delete
     public static boolean deleteUser(User selectedUser) throws SQLException {
-//        if (selectedUser != null && CustomerDAOImpl.allCustomers.contains(selectedCustomer)) {
-//            int customerID = selectedCustomer.getCustomerID();
-//            String sql = "DELETE FROM customers WHERE Customer_ID = ?;";
-//            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-//            ps.setInt(1, customerID);
-//            int rowsAffected = ps.executeUpdate();
-//            if (rowsAffected > 0) {
-//                allCustomers.remove(selectedCustomer);
-//                return true;
-//            }
-//        }
-        return false;
+        int userID = selectedUser.getUserID();
+        String sql = "DELETE FROM users WHERE user_ID = ?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, userID);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
     }
     //generate id
     public static int userGenerateID() throws SQLException {

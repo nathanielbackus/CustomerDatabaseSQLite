@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Country;
@@ -35,6 +36,8 @@ public class CustomerController implements Initializable {
     private ComboBox<Country> CountryComboBox;
     @FXML
     private ComboBox<Division> DivisionComboBox;
+    @FXML
+    private Label TitleLabel;
     Customer CurrentCustomer;
     /**event to return to customer appointment**/
     @FXML
@@ -52,6 +55,7 @@ public class CustomerController implements Initializable {
     public void setCustomer(Customer customer) throws SQLException {
         CurrentCustomer = customer;
         CustomerIDTextField.setText(String.valueOf(customer.getCustomerID()));
+        TitleLabel.setText("Update Customer");
         NameTextField.setText(customer.getCustomerName());
         AddressTextField.setText(customer.getAddress());
         PostalCodeTextField.setText(customer.getPostalCode());

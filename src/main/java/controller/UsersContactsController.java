@@ -93,36 +93,47 @@ public class UsersContactsController implements Initializable {
         stage.show();
     }
     @FXML
-    void OnActionEditUser(ActionEvent event) throws IOException {
+    void OnActionEditUser(ActionEvent event) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("User.fxml"));
+        loader.load();
+        UserController UController = loader.getController();
+        UController.setUser(AllUsersTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("User.fxml"));
+        Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
-        stage.show();
+        stage.showAndWait();
     }
     @FXML
     public void OnActionDeleteUser(ActionEvent event) throws IOException, SQLException {
         User selectedUser = AllUsersTableView.getSelectionModel().getSelectedItem();
         if (selectedUser != null) {
             int userID = selectedUser.getUserID();
-            String sql = "SELECT * FROM appointments WHERE user_ID = ?;";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setInt(1, userID);
-            ResultSet rowsAffected = ps.executeQuery();
-            if (!rowsAffected.next()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Delete User?");
-                alert.setHeaderText("Are you sure you want to delete the selected user?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    UserDAO.deleteUser(selectedUser);
-                } else if (result.get() == ButtonType.CANCEL) {
-                    return;
+            if (userID != LoginController.UserIDLoggedIn()){
+                String sql = "SELECT * FROM appointments WHERE user_ID = ?;";
+                PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+                ps.setInt(1, userID);
+                ResultSet rowsAffected = ps.executeQuery();
+                if (!rowsAffected.next()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Delete User?");
+                    alert.setHeaderText("Are you sure you want to delete the selected user?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        UserDAO.deleteUser(selectedUser);
+                        observableUserList.remove(selectedUser);
+                    } else if (result.get() == ButtonType.CANCEL) {
+                        return;
+                    }
+                } else if(userID == LoginController.UserIDLoggedIn()) {
+                    JDBC.ErrorMessage("Error Deleting User", "User is logged in.", "Please log into a different user account to delete this user.");
+                } else {
+                    JDBC.ErrorMessage("Error Deleting User", "Appointment associated with user", "Please delete all appointments associated with this user before trying to delete them again.");
                 }
-            } else if(userID == LoginController.UserIDLoggedIn()) {
-                JDBC.ErrorMessage("Error Deleting User", "User is logged in.", "Please log into a different user account to delete this user.");
-            }else {
-                JDBC.ErrorMessage("Error Deleting USer", "Appointment associated with  user", "Please delete all appointments associated with this user before trying to delete them again.");
+            } else {
+                JDBC.ErrorMessage("Error Deleting User", "Cannot Delete Self", "Please log into another account to delete this user.");
             }
+
         }
     }
 
