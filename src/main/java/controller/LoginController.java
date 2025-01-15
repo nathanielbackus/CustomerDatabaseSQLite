@@ -192,22 +192,26 @@ public class LoginController extends Application implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         JDBC.openConnection();
-        if (userDAO.getAllUsers().isEmpty()) {
-            isNewUser = true;
-            UsernameLabel.setText(rb.getString("FirstUsername"));
-            PasswordLabel.setText(rb.getString("FirstPassword"));
-            CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
-            LoginButton.setText(rb.getString("CreateUser"));
-            ExitButton.setText(rb.getString("Exit"));
-            setLocationLabel();
-        } else {
-            isNewUser = false;
-            UsernameLabel.setText(rb.getString("Username"));
-            PasswordLabel.setText(rb.getString("Password"));
-            CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
-            LoginButton.setText(rb.getString("Login"));
-            ExitButton.setText(rb.getString("Exit"));
-            setLocationLabel();
+        try {
+            if (userDAO.getAllUsers().isEmpty()) {
+                isNewUser = true;
+                UsernameLabel.setText(rb.getString("FirstUsername"));
+                PasswordLabel.setText(rb.getString("FirstPassword"));
+                CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
+                LoginButton.setText(rb.getString("CreateUser"));
+                ExitButton.setText(rb.getString("Exit"));
+                setLocationLabel();
+            } else {
+                isNewUser = false;
+                UsernameLabel.setText(rb.getString("Username"));
+                PasswordLabel.setText(rb.getString("Password"));
+                CurrentLocationLabel.setText(rb.getString("CurrentLocation"));
+                LoginButton.setText(rb.getString("Login"));
+                ExitButton.setText(rb.getString("Exit"));
+                setLocationLabel();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     public static void main(String[] args) throws SQLException {

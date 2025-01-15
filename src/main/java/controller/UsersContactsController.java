@@ -3,6 +3,8 @@ package controller;
 import dao.ContactDAO;
 import dao.UserDAO;
 import helper.JDBC;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +30,8 @@ import java.util.ResourceBundle;
 public class UsersContactsController implements Initializable {
     Stage stage;
     Parent scene;
+    private ObservableList<User> observableUserList;
+    private ObservableList<Contact> observableContactList;
     @FXML
     private TableView<Contact> AllContactsTableView;
     @FXML
@@ -126,18 +130,21 @@ public class UsersContactsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle){
         try {
             ContactDAO.loadAllContacts();
-            UserDAO.loadAllUsers();
+            UserDAO.getAllUsers();
+            observableUserList = FXCollections.observableArrayList(UserDAO.getAllUsers());
+            observableContactList = FXCollections.observableArrayList(ContactDAO.getAllContacts());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        AllContactsTableView.setItems(ContactDAO.getAllContacts());
+        AllContactsTableView.setItems(observableContactList);
         ContactsTBID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
         ContactsTBName.setCellValueFactory(new PropertyValueFactory<>("ContactName"));
         ContactsTBEmail.setCellValueFactory(new PropertyValueFactory<>("Email"));
-        AllUsersTableView.setItems(UserDAO.getAllUsers());
+
+        AllUsersTableView.setItems(observableUserList);
         UserTBID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         UserTBUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         UserTBPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
-
     }
+
 }

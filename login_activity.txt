@@ -79,3 +79,7 @@ Successful Login: admin on 2025-01-14 at 15:49:48.491947
 Successful Login: admin on 2025-01-14 at 16:02:47.653733
 Successful Login: admin on 2025-01-14 at 16:04:34.916919
 Successful Login and First User Creation: admin on 2025-01-15 at 12:29:03.001595
+Failed Login: admin on 2025-01-15 at 12:47:30.621116
+Successful Login: test on 2025-01-15 at 12:47:59.474150
+Successful Login: test 2 on 2025-01-15 at 12:53:22.034806
+Successful Login: test on 2025-01-15 at 12:59:26.910894
