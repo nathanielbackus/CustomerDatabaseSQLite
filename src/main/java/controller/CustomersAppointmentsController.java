@@ -1,6 +1,8 @@
 package controller;
 import dao.*;
 import helper.JDBC;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +25,8 @@ public class CustomersAppointmentsController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
+    private ObservableList<Customer> observablCustomerList;
+    private ObservableList<Appointment> observableAppointmentList;
     @FXML
     private TableView<Appointment> AllAppointmentsTableView;
     @FXML
@@ -157,12 +161,14 @@ public class CustomersAppointmentsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            CustomerDAO.loadAllCustomers();
-            AppointmentDAO.loadAllAppointments();
+            CustomerDAO.getAllCustomers();
+            observablCustomerList = FXCollections.observableArrayList(CustomerDAO.getAllCustomers());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        AllCustomersTableView.setItems(CustomerDAO.getAllCustomers());
+        AppointmentDAO.getTimeQueryAppointments();
+        observableAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getTimeQueryAppointments());
+        AllCustomersTableView.setItems(observablCustomerList);
         CustomerTBID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         CustomerTBAddress.setCellValueFactory(new PropertyValueFactory<>("Address"));
         CustomerTBDivisionID.setCellValueFactory(new PropertyValueFactory<>("DivisionID"));
@@ -176,14 +182,15 @@ public class CustomersAppointmentsController implements Initializable {
             }
             RadioButton selectedRadioButton = (RadioButton) newValue;
             if (selectedRadioButton == AllAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
             } else if (selectedRadioButton == WeekAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(7));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
             } else if (selectedRadioButton == MonthAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(30));
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
             }
         });
-        AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
+//        AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
+        AllAppointmentsTableView.setItems(observableAppointmentList);
         AppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
         AppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         AppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));

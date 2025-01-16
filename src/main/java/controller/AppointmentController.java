@@ -132,7 +132,7 @@ public class AppointmentController implements Initializable {
             LocalDateTime utcEndTime = JDBC.convertToUTC(endTimeAndDate, ZoneId.systemDefault());
             System.out.println(utcStartTime);
             /**query if overlapping**/
-            for (Appointment appointment : AppointmentDAO.getAllAppointments()) {
+            for (Appointment appointment : AppointmentDAO.getTimeQueryAppointments()) {
                 if (appointment.getCustomerID() == customerID) {
                     LocalDateTime start = JDBC.convertToUTC(appointment.getStartTime(), ZoneId.systemDefault());
                     LocalDateTime end = JDBC.convertToUTC(appointment.getEndTime(), ZoneId.systemDefault());
@@ -151,8 +151,8 @@ public class AppointmentController implements Initializable {
             String UpdatedBy = LoginController.UserLoggedIn();
             int appointmentID;
             if (AppointmentIDTextField.getText().isEmpty()) {
-                appointmentID = AppointmentDAO.AppointmentGenerateID();
-                AppointmentIDTextField.setText(String.valueOf(appointmentID));
+                appointmentID = AppointmentDAO.appointmentGenerateID();
+//                AppointmentIDTextField.setText(String.valueOf(appointmentID));
                 AppointmentDAO.addAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, CreatedBy, customerID, userID, contactID);
             } else{
                 appointmentID = Integer.parseInt(AppointmentIDTextField.getText());

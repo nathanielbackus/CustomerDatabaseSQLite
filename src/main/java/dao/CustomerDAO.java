@@ -11,27 +11,28 @@ import java.util.List;
 
 public interface CustomerDAO {
     public static ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
-    public static void loadAllCustomers() throws SQLException {
-        allCustomers.clear();
-        String sql = "SELECT * FROM CUSTOMERS";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int CustomerID = rs.getInt("Customer_ID");
-            String CustomerName = rs.getString("Customer_Name");
-            String Address = rs.getString("Address");
-            String PostalCode = rs.getString("Postal_Code");
-            String Phone = rs.getString("Phone");
-            int DivisionID = rs.getInt("Division_ID");
-            Customer customer = new Customer(CustomerID, CustomerName, Address, PostalCode, Phone, DivisionID);
-            allCustomers.add(customer);
+    public static List<Customer> getAllCustomers() throws SQLException{
+        List<Customer> customerReturnList = new ArrayList<>();
+        String sql = "SELECT * FROM CUSTOMERS;";
+        try (PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int customerID = rs.getInt("customer_id");
+                String customerName = rs.getString("customer_name");
+                String address = rs.getString("address");
+                String postalCode = rs.getString("postal_code");
+                String phone = rs.getString("phone");
+                int divisionID = rs.getInt("division_id");
+                Customer customer = new Customer(customerID, customerName, address, postalCode, phone, divisionID);
+                customerReturnList.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }
-    public static ObservableList<Customer> getAllCustomers() {
-        return allCustomers;
+        return customerReturnList;
     }
     /**create a unique customer id**/
-    public static int CustomerGenerateID(){
+    public static int CustomerGenerateID() throws SQLException {
         int maxNumber = 0;
         for (Customer customer : getAllCustomers()){
             if (customer.getCustomerID() > maxNumber){

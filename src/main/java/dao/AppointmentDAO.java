@@ -2,21 +2,18 @@ package dao;
 import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Appointment;
-import model.ReportContact;
-import model.ReportCustomer;
-import model.TypeMonthMatch;
+import model.*;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
-import java.util.ArrayList;
 import java.util.List;
 public interface AppointmentDAO {
     /**list of all appointments, will populate this list with data from the database to then populate tabelviews**/
     public static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
-    public static List<Appointment> getAllAppointments() {
+    public static List<Appointment> getTimeQueryAppointments() {
         return allAppointments;
     }
     public static void loadAllAppointments() throws SQLException {
@@ -34,20 +31,20 @@ public interface AppointmentDAO {
             ZonedDateTime Start = JDBC.TimeStampToUserZone(startTS);
             Timestamp EndTS = rs.getTimestamp("End");
             ZonedDateTime End = JDBC.TimeStampToUserZone(EndTS);
-            Timestamp CreateTimeTS = rs.getTimestamp("Create_Date");
+            Timestamp CreateTimeTS = rs.getTimestamp("CreatedOn");
             LocalDateTime CreateTime = null;
             if (CreateTimeTS != null) {
                 ZonedDateTime tempCreateTime = JDBC.TimeStampToUserZone(CreateTimeTS);
                 CreateTime = tempCreateTime.toLocalDateTime();
             }
-            String CreatedBy = rs.getString("Created_By");
-            Timestamp UpdateTimeTS = rs.getTimestamp("Last_Update");
+            String CreatedBy = rs.getString("CreatedBy");
+            Timestamp UpdateTimeTS = rs.getTimestamp("updatedOn");
             LocalDateTime UpdateTime = null;
             if (UpdateTimeTS != null) {
                 ZonedDateTime tempUpdateTime = JDBC.TimeStampToUserZone(UpdateTimeTS);
                 UpdateTime = tempUpdateTime.toLocalDateTime();
             }
-            String UpdatedBy = rs.getString("Last_Updated_By");
+            String UpdatedBy = rs.getString("updatedBy");
             int CustomerID = rs.getInt("Customer_ID");
             int UserID = rs.getInt("User_ID");
             int ContactID = rs.getInt("Contact_ID");
@@ -59,7 +56,7 @@ public interface AppointmentDAO {
         rs.close();
     }
 
-    public static ObservableList<Appointment> getAllAppointments(int timeQuery) {
+    public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery) {
         if (timeQuery <= 0) {
             return allAppointments;
         } else {
@@ -92,16 +89,6 @@ public interface AppointmentDAO {
             throw new RuntimeException(e);
         }
         return combinedAppointments;
-    }
-    public static int AppointmentGenerateID(){
-        int maxNumber = 0;
-        for (Appointment appointment : allAppointments){
-            if (appointment.getAppointmentID() > maxNumber){
-                maxNumber = appointment.getAppointmentID();
-            }
-        }
-        int id = maxNumber+1;
-        return id;
     }
     /**sql query to collect data on appointments belonging to specified contact**/
     public static ObservableList<ReportContact> getContactAppointments(int contactID) {
@@ -163,20 +150,20 @@ public interface AppointmentDAO {
                 String Type = rs.getString("Type");
                 LocalDateTime Start = rs.getTimestamp("Start").toLocalDateTime();
                 LocalDateTime End = rs.getTimestamp("End").toLocalDateTime();
-                Timestamp CreateTimeTS = rs.getTimestamp("Create_Date");
+                Timestamp CreateTimeTS = rs.getTimestamp("CreatedOn");
                 LocalDateTime CreateTime = null;
                 if (CreateTimeTS != null) {
                     ZonedDateTime tempCreateTime = JDBC.TimeStampToUserZone(CreateTimeTS);
                     CreateTime = tempCreateTime.toLocalDateTime();
                 }
-                String CreatedBy = rs.getString("Created_By");
-                Timestamp UpdatedTimeTS = rs.getTimestamp("Last_Update");
+                String CreatedBy = rs.getString("CreatedBy");
+                Timestamp UpdatedTimeTS = rs.getTimestamp("UpdateOn");
                 LocalDateTime UpdatedTime = null;
                 if (UpdatedTimeTS != null) {
                     ZonedDateTime tempUpdateTime = JDBC.TimeStampToUserZone(UpdatedTimeTS);
                     UpdatedTime = tempUpdateTime.toLocalDateTime();
                 }
-                String LastUpdatedBy = rs.getString("Last_Updated_By");
+                String LastUpdatedBy = rs.getString("UpdatedBy");
                 int CustomerID = rs.getInt("Customer_ID");
                 int UserID = rs.getInt("User_ID");
                 int ContactID = rs.getInt("Contact_ID");
@@ -191,7 +178,7 @@ public interface AppointmentDAO {
     }
     /**sql insert, to add an appointment, with createdby**/
     public static int addAppointment(int AppointmentID, String Title, String Description, String Location, String Type, LocalDateTime Start, LocalDateTime End, String CreatedBy, int CustomerID, int UserID, int ContactID) throws SQLException {
-        String sql = "INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, Created_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)";
+        String sql = "INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, CreatedOn, CreatedBy, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, AppointmentID);
         ps.setString(2, Title);
@@ -204,7 +191,7 @@ public interface AppointmentDAO {
         ZonedDateTime utcStart = ZonedDateTime.ofInstant(zonedStart.toInstant(), utcZoneId);
         ZonedDateTime zonedEnd = ZonedDateTime.of(End, userZoneId);
         ZonedDateTime utcEnd = ZonedDateTime.ofInstant(zonedEnd.toInstant(), utcZoneId);
-        ps.setTimestamp(6, Timestamp.valueOf(utcStart.toLocalDateTime()));
+        ps.setString(6, String.valueOf(utcStart.toLocalDateTime()));
         ps.setTimestamp(7, Timestamp.valueOf(utcEnd.toLocalDateTime()));
         ps.setString(8, CreatedBy);
         ps.setInt(9, CustomerID);
@@ -256,5 +243,15 @@ public interface AppointmentDAO {
             }
         }
         return false;
+    }
+    public static int appointmentGenerateID() throws SQLException {
+        int maxNumber = 0;
+        for (Appointment appointment: getTimeQueryAppointments(0)){
+            if (appointment.getAppointmentID() > maxNumber){
+                maxNumber = appointment.getAppointmentID();
+            }
+        }
+        int id = maxNumber+1;
+        return id;
     }
 }
