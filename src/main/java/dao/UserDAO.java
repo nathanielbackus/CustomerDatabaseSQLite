@@ -14,11 +14,11 @@ import java.util.List;
 
 public class UserDAO {
     //puts all users in a array
-    public static List<User> getAllUsers() throws SQLException{
+    public static List<User> getAllUsers() throws SQLException {
         List<User> userReturnList = new ArrayList<>();
         String sql = "SELECT * FROM USERS;";
         try (PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int userID = rs.getInt("user_id");
                 String username = rs.getString("username");
@@ -30,11 +30,9 @@ public class UserDAO {
             e.printStackTrace();
         }
         return userReturnList;
-    }//need to make a alluserslist with a listener or something
-
+    }
     //add
     public static int addUser(int userID, String username, String password, String CreatedBy) throws SQLException {
-//        JDBC.openConnection();
         String sql = "INSERT INTO users (user_ID, username, password, createdOn, CreatedBy) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, userID);

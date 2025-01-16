@@ -27,6 +27,7 @@ public class AppointmentController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
+    private ObservableList<Contact> observableContactList;
     @FXML
     private TextField AppointmentCustomerIDTextField, AppointmentDescriptionTextField, AppointmentLocationTextField, AppointmentTitleTextField,
             AppointmentTypeTextField, AppointmentUserIDTextField, AppointmentIDTextField;
@@ -172,12 +173,13 @@ public class AppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ContactDAO.loadAllContacts();
+            ContactDAO.getAllContacts();
+            //we need to change this to however it works in usercontactcontroller to populate
+            observableContactList = FXCollections.observableArrayList(ContactDAO.getAllContacts());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        ObservableList<Contact> contacts = ContactDAO.getAllContacts();
-        ContactComboBox.setItems(contacts);
+        ContactComboBox.setItems(observableContactList);
         /**populate times in comboboxes**/
         String timeslots[] =
                 {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};

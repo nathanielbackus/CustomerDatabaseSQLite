@@ -55,11 +55,16 @@ public class UsersContactsController implements Initializable {
         stage.show();
     }
     @FXML
-    void OnActionEditContact(ActionEvent event) throws IOException {
+    void OnActionEditContact(ActionEvent event) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("Contact.fxml"));
+        loader.load();
+        ContactController CController = loader.getController();
+        CController.setContact(AllContactsTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("Contact.fxml"));
+        Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
-        stage.show();
+        stage.showAndWait();
     }
     @FXML
     public void OnActionDeleteContact(ActionEvent event) throws IOException, SQLException {
@@ -76,7 +81,8 @@ public class UsersContactsController implements Initializable {
                 alert.setHeaderText("Are you sure you want to delete the selected contact?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-//                    ContactDAO.deleteContact(selectedContact);
+                    ContactDAO.deleteContact(selectedContact);
+                    observableContactList.remove(selectedContact);
                 } else if (result.get() == ButtonType.CANCEL) {
                     return;
                 }
@@ -140,7 +146,7 @@ public class UsersContactsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
         try {
-            ContactDAO.loadAllContacts();
+            ContactDAO.getAllContacts();
             UserDAO.getAllUsers();
             observableUserList = FXCollections.observableArrayList(UserDAO.getAllUsers());
             observableContactList = FXCollections.observableArrayList(ContactDAO.getAllContacts());
