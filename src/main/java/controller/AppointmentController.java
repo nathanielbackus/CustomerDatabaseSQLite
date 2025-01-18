@@ -152,12 +152,11 @@ public class AppointmentController implements Initializable {
             int appointmentID;
             if (AppointmentIDTextField.getText().isEmpty()) {
                 appointmentID = AppointmentDAO.appointmentGenerateID();
-//                AppointmentIDTextField.setText(String.valueOf(appointmentID));
+                AppointmentIDTextField.setText(String.valueOf(appointmentID));
                 AppointmentDAO.addAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, CreatedBy, customerID, userID, contactID);
             } else{
                 appointmentID = Integer.parseInt(AppointmentIDTextField.getText());
                 AppointmentDAO.updateAppointment(appointmentID, title, description, location, type, startTimeAndDate, endTimeAndDate, UpdatedBy, customerID, userID, contactID);
-
             }
             stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("CustomersAppointments.fxml"));

@@ -9,8 +9,7 @@ public class Appointment {
     private LocalDateTime StartTime, EndTime, CreateTime, UpdateTime;
 
     public Appointment(int appointmentID, String title, String description, String location, String type,
-                       LocalDateTime startTime, LocalDateTime endTime, LocalDateTime createTime, String createdBy,
-                       LocalDateTime updateTime, String lastUpdatedBy, int customerID, int userID, int contactID) {
+                       LocalDateTime startTime, LocalDateTime endTime, int customerID, int userID, int contactID) {
         this.AppointmentID = appointmentID;
         this.CustomerID = customerID;
         this.UserID = userID;
@@ -21,10 +20,6 @@ public class Appointment {
         this.Type = type;
         this.StartTime = startTime;
         this.EndTime = endTime;
-        this.CreateTime = createTime;
-        this.CreatedBy = createdBy;
-        this.UpdateTime = updateTime;
-        this.LastUpdatedBy = lastUpdatedBy;
     }
     public int getAppointmentID() {
         return AppointmentID;

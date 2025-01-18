@@ -4,56 +4,42 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 public interface AppointmentDAO {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     /**list of all appointments, will populate this list with data from the database to then populate tabelviews**/
     public static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
     public static List<Appointment> getTimeQueryAppointments() {
         return allAppointments;
     }
-    public static void loadAllAppointments() throws SQLException {
-        allAppointments.clear();
-        String sql = "SELECT * FROM appointments;";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int AppointmentID = rs.getInt("Appointment_ID");
-            String Title = rs.getString("Title");
-            String Description = rs.getString("Description");
-            String Location = rs.getString("Location");
-            String Type = rs.getString("Type");
-            Timestamp startTS = rs.getTimestamp("Start");
-            ZonedDateTime Start = JDBC.TimeStampToUserZone(startTS);
-            Timestamp EndTS = rs.getTimestamp("End");
-            ZonedDateTime End = JDBC.TimeStampToUserZone(EndTS);
-            Timestamp CreateTimeTS = rs.getTimestamp("CreatedOn");
-            LocalDateTime CreateTime = null;
-            if (CreateTimeTS != null) {
-                ZonedDateTime tempCreateTime = JDBC.TimeStampToUserZone(CreateTimeTS);
-                CreateTime = tempCreateTime.toLocalDateTime();
+    public static List<Appointment> getAllAppointments() throws SQLException {
+        List<Appointment> appointmentReturnList = new ArrayList<>();
+        String sql = "SELECT * FROM APPOINTMENTS;";
+        try (PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()){
+            while (rs.next()) {
+                int appointmentID = rs.getInt("appointment_id");
+                String Title = rs.getString("Title");
+                String Description = rs.getString("Description");
+                String Location = rs.getString("Location");
+                String Type = rs.getString("Type");
+                Timestamp start = rs.getTimestamp("Start");
+                Timestamp end = rs.getTimestamp("End");
+                int CustomerID = rs.getInt("Customer_ID");
+                int UserID = rs.getInt("User_ID");
+                int ContactID = rs.getInt("Contact_ID");
+                Appointment appointment = new Appointment(appointmentID, Title, Description, Location, Type, start.toLocalDateTime(), end.toLocalDateTime(), CustomerID, UserID, ContactID);
+                appointmentReturnList.add(appointment);
             }
-            String CreatedBy = rs.getString("CreatedBy");
-            Timestamp UpdateTimeTS = rs.getTimestamp("updatedOn");
-            LocalDateTime UpdateTime = null;
-            if (UpdateTimeTS != null) {
-                ZonedDateTime tempUpdateTime = JDBC.TimeStampToUserZone(UpdateTimeTS);
-                UpdateTime = tempUpdateTime.toLocalDateTime();
-            }
-            String UpdatedBy = rs.getString("updatedBy");
-            int CustomerID = rs.getInt("Customer_ID");
-            int UserID = rs.getInt("User_ID");
-            int ContactID = rs.getInt("Contact_ID");
-            Appointment appointment = new Appointment(AppointmentID, Title, Description, Location, Type, Start.toLocalDateTime(), End.toLocalDateTime(),
-                    CreateTime, CreatedBy, UpdateTime, UpdatedBy, CustomerID, UserID, ContactID);
-            allAppointments.add(appointment);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        ps.close();
-        rs.close();
+        return appointmentReturnList;
     }
 
     public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery) {
@@ -150,25 +136,11 @@ public interface AppointmentDAO {
                 String Type = rs.getString("Type");
                 LocalDateTime Start = rs.getTimestamp("Start").toLocalDateTime();
                 LocalDateTime End = rs.getTimestamp("End").toLocalDateTime();
-                Timestamp CreateTimeTS = rs.getTimestamp("CreatedOn");
-                LocalDateTime CreateTime = null;
-                if (CreateTimeTS != null) {
-                    ZonedDateTime tempCreateTime = JDBC.TimeStampToUserZone(CreateTimeTS);
-                    CreateTime = tempCreateTime.toLocalDateTime();
-                }
-                String CreatedBy = rs.getString("CreatedBy");
-                Timestamp UpdatedTimeTS = rs.getTimestamp("UpdateOn");
-                LocalDateTime UpdatedTime = null;
-                if (UpdatedTimeTS != null) {
-                    ZonedDateTime tempUpdateTime = JDBC.TimeStampToUserZone(UpdatedTimeTS);
-                    UpdatedTime = tempUpdateTime.toLocalDateTime();
-                }
-                String LastUpdatedBy = rs.getString("UpdatedBy");
                 int CustomerID = rs.getInt("Customer_ID");
                 int UserID = rs.getInt("User_ID");
                 int ContactID = rs.getInt("Contact_ID");
                 Appointment results = new Appointment(AppointmentID, Title, Description, Location,
-                        Type, Start, End, CreateTime, CreatedBy, UpdatedTime, LastUpdatedBy, CustomerID, UserID, ContactID);
+                        Type, Start, End, CustomerID, UserID, ContactID);
                 userAppointments.add(results);
             }
         } catch (SQLException e) {
@@ -176,7 +148,6 @@ public interface AppointmentDAO {
         }
         return userAppointments;
     }
-    /**sql insert, to add an appointment, with createdby**/
     public static int addAppointment(int AppointmentID, String Title, String Description, String Location, String Type, LocalDateTime Start, LocalDateTime End, String CreatedBy, int CustomerID, int UserID, int ContactID) throws SQLException {
         String sql = "INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, CreatedOn, CreatedBy, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -185,21 +156,26 @@ public interface AppointmentDAO {
         ps.setString(3, Description);
         ps.setString(4, Location);
         ps.setString(5, Type);
+        // Convert to UTC and format
         ZoneId userZoneId = ZoneId.systemDefault();
         ZoneId utcZoneId = ZoneId.of("UTC");
         ZonedDateTime zonedStart = ZonedDateTime.of(Start, userZoneId);
         ZonedDateTime utcStart = ZonedDateTime.ofInstant(zonedStart.toInstant(), utcZoneId);
         ZonedDateTime zonedEnd = ZonedDateTime.of(End, userZoneId);
         ZonedDateTime utcEnd = ZonedDateTime.ofInstant(zonedEnd.toInstant(), utcZoneId);
-        ps.setString(6, String.valueOf(utcStart.toLocalDateTime()));
-        ps.setTimestamp(7, Timestamp.valueOf(utcEnd.toLocalDateTime()));
+
+        // Format the datetime strings
+        ps.setString(6, utcStart.format(formatter));
+        ps.setString(7, utcEnd.format(formatter));
         ps.setString(8, CreatedBy);
         ps.setInt(9, CustomerID);
         ps.setInt(10, UserID);
         ps.setInt(11, ContactID);
+
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
+
     /**sql update to update an appointment with new data and with updateby information**/
     public static int updateAppointment(int AppointmentID, String Title, String Description, String Location,
                                         String Type, LocalDateTime Start, LocalDateTime End, String UpdatedBy, int
@@ -218,8 +194,8 @@ public interface AppointmentDAO {
         ZonedDateTime utcStart = ZonedDateTime.ofInstant(zonedStart.toInstant(), utcZoneId);
         ZonedDateTime zonedEnd = ZonedDateTime.of(End, userZoneId);
         ZonedDateTime utcEnd = ZonedDateTime.ofInstant(zonedEnd.toInstant(), utcZoneId);
-        ps.setTimestamp(5, Timestamp.valueOf(utcStart.toLocalDateTime()));
-        ps.setTimestamp(6, Timestamp.valueOf(utcEnd.toLocalDateTime()));
+        ps.setString(6, utcStart.format(formatter));
+        ps.setString(7, utcEnd.format(formatter));
         ps.setString(7, UpdatedBy);
         ps.setInt(8, CustomerID);
         ps.setInt(9, UserID);
@@ -246,12 +222,12 @@ public interface AppointmentDAO {
     }
     public static int appointmentGenerateID() throws SQLException {
         int maxNumber = 0;
-        for (Appointment appointment: getTimeQueryAppointments(0)){
+        for (Appointment appointment : getAllAppointments()){
             if (appointment.getAppointmentID() > maxNumber){
                 maxNumber = appointment.getAppointmentID();
             }
         }
         int id = maxNumber+1;
         return id;
-    }
+    } // this shit is not working. foreign key interference?
 }
