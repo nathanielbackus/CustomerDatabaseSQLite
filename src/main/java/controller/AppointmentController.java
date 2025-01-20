@@ -9,10 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import model.*;
 import java.io.IOException;
@@ -27,7 +24,10 @@ public class AppointmentController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
+
     private ObservableList<Contact> observableContactList;
+    @FXML
+    private Label AppointmentLabel;
     @FXML
     private TextField AppointmentCustomerIDTextField, AppointmentDescriptionTextField, AppointmentLocationTextField, AppointmentTitleTextField,
             AppointmentTypeTextField, AppointmentUserIDTextField, AppointmentIDTextField;
@@ -63,10 +63,11 @@ public class AppointmentController implements Initializable {
         AppointmentTypeTextField.setText(appointment.getType());
         AppointmentCustomerIDTextField.setText(String.valueOf(appointment.getCustomerID()));
         AppointmentUserIDTextField.setText(String.valueOf(appointment.getUserID()));
-        AppointmentStartDatePicker.setValue(appointment.getStartTime().toLocalDate());
-        AppointmentStartTimeComboBox.setValue(appointment.getStartTime().toLocalTime());
-        AppointmentEndDatePicker.setValue(appointment.getEndTime().toLocalDate());
-        AppointmentEndTimeComboBox.setValue(appointment.getEndTime().toLocalTime());
+        AppointmentStartDatePicker.setValue(JDBC.toSystemDefault(appointment.getStartTime()).toLocalDate());
+        AppointmentStartTimeComboBox.setValue(JDBC.toSystemDefault(appointment.getStartTime()).toLocalTime());
+        AppointmentEndDatePicker.setValue(JDBC.toSystemDefault(appointment.getEndTime()).toLocalDate());
+        AppointmentEndTimeComboBox.setValue(JDBC.toSystemDefault(appointment.getEndTime()).toLocalTime());
+        AppointmentLabel.setText("Update Appointment");
     }
 
     /**event to collect all data in the datafields, compare them to logical checks, and then pass them as an arguement to the creation of AppointmentDAO's addappointment**/
@@ -119,8 +120,8 @@ public class AppointmentController implements Initializable {
                 return;
             }
             /**query business hours**/
-            LocalTime estStartTime = JDBC.convertToEST(startTime, ZoneId.systemDefault());
-            LocalTime estEndTime = JDBC.convertToEST(endTime, ZoneId.systemDefault());
+            LocalTime estStartTime = JDBC.convertToEST(startTime);
+            LocalTime estEndTime = JDBC.convertToEST(endTime);
             if ((estStartTime.getHour() > 22)
                 || estStartTime.getHour() < 8
                 || estEndTime.getHour() > 22
@@ -128,14 +129,14 @@ public class AppointmentController implements Initializable {
                 JDBC.ErrorMessage("Time Error", "Appointment Start Time or End Time Outside of Business Hours", "Please choose a time with our office hours of 8:00 a.m. to 22:00 p.m. ET");
                 return;
             }
-            LocalDateTime utcStartTime = JDBC.convertToUTC(startTimeAndDate, ZoneId.systemDefault());
-            LocalDateTime utcEndTime = JDBC.convertToUTC(endTimeAndDate, ZoneId.systemDefault());
+            LocalDateTime utcStartTime = JDBC.toUTC(startTimeAndDate);
+            LocalDateTime utcEndTime = JDBC.toUTC(endTimeAndDate);
             System.out.println(utcStartTime);
             /**query if overlapping**/
             for (Appointment appointment : AppointmentDAO.getTimeQueryAppointments()) {
                 if (appointment.getCustomerID() == customerID) {
-                    LocalDateTime start = JDBC.convertToUTC(appointment.getStartTime(), ZoneId.systemDefault());
-                    LocalDateTime end = JDBC.convertToUTC(appointment.getEndTime(), ZoneId.systemDefault());
+                    LocalDateTime start = JDBC.toUTC(appointment.getStartTime());
+                    LocalDateTime end = JDBC.toUTC(appointment.getEndTime());
                     if ((start.isBefore(utcEndTime) || start.isEqual(utcEndTime)) && end.isAfter(utcStartTime)) {
                         JDBC.ErrorMessage("Time Error", "Appointment Overlap", "Please choose a time for an appointment that does not overlap with another appointment.");
                         return;

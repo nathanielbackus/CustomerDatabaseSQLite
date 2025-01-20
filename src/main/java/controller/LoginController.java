@@ -122,8 +122,8 @@ public class LoginController extends Application implements Initializable {
                         return zonedTime.toLocalDateTime();
                     };
                     for (Appointment appointment : AppointmentDAO.getUserAppointments(LoginController.UserIDLoggedIn())) {
-                        if (appointment.getStartTime().isAfter(JDBC.convertToUTC(LocalDateTime.now(), ZoneId.systemDefault()))
-                                && appointment.getStartTime().isBefore(JDBC.convertToUTC(LocalDateTime.now().plusMinutes(15), ZoneId.systemDefault()))) {
+                        if (appointment.getStartTime().isAfter(JDBC.toUTC(LocalDateTime.now()))
+                                && appointment.getStartTime().isBefore(JDBC.toUTC(LocalDateTime.now().plusMinutes(15)))) {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Upcoming Appointments");
                             alert.setHeaderText("You have an appointment soon. ID: " + appointment.getAppointmentID() + ", on " + LocalDate.from(localDateTimeToUserZone.convert(appointment.getStartTime())) + ", at " + LocalTime.from(localDateTimeToUserZone.convert(appointment.getStartTime())));

@@ -61,7 +61,6 @@ public interface AppointmentDAO {
     public static ObservableList<TypeMonthMatch> getTypeMonthAppointments() {
         ObservableList<TypeMonthMatch> combinedAppointments = FXCollections.observableArrayList();
         try {
-//            JDBC.openConnection();
             String sql = "SELECT type AS appointmentType, month(start) AS appointmentMonth, count(1) AS totalCount FROM client_schedule.appointments GROUP BY type, month(start);";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -194,8 +193,8 @@ public interface AppointmentDAO {
         ZonedDateTime utcStart = ZonedDateTime.ofInstant(zonedStart.toInstant(), utcZoneId);
         ZonedDateTime zonedEnd = ZonedDateTime.of(End, userZoneId);
         ZonedDateTime utcEnd = ZonedDateTime.ofInstant(zonedEnd.toInstant(), utcZoneId);
-        ps.setString(6, utcStart.format(formatter));
-        ps.setString(7, utcEnd.format(formatter));
+        ps.setString(5, utcStart.format(formatter));
+        ps.setString(6, utcEnd.format(formatter));
         ps.setString(7, UpdatedBy);
         ps.setInt(8, CustomerID);
         ps.setInt(9, UserID);

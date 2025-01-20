@@ -1,7 +1,6 @@
 package helper;
 
 import javafx.scene.control.Alert;
-import model.Country;
 
 import java.sql.*;
 import java.time.*;
@@ -180,17 +179,33 @@ public abstract class JDBC {
     }
 
     /** Helper function to convert a LocalDateTime to UTC **/
-    public static LocalDateTime convertToUTC(LocalDateTime localTime, ZoneId zoneId) {
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(localTime, zoneId);
+    public static LocalDateTime convertToUTC(LocalDateTime localTime) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(localTime, ZoneId.systemDefault());
         ZonedDateTime utcZonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("UTC"));
         return utcZonedDateTime.toLocalDateTime();
     }
 
-    /** Helper function to convert a time to EST **/
-    public static LocalTime convertToEST(LocalTime localTime, ZoneId zoneId) {
+    public static LocalDateTime toSystemDefault(LocalDateTime time) {
+        ZoneId userZoneID = ZoneId.systemDefault();
+        ZoneId utcZoneID = ZoneId.of("UTC");
+        ZonedDateTime zonedTime = ZonedDateTime.of(LocalDateTime.from(time), utcZoneID);
+        LocalDateTime userZonedTime = LocalDateTime.ofInstant(zonedTime.toInstant(), userZoneID);
+        return userZonedTime;
+    }
+
+    public static LocalDateTime toUTC(LocalDateTime time) {
+        ZoneId userZoneID = ZoneId.systemDefault();
+        ZoneId utcZoneID = ZoneId.of("UTC");
+        ZonedDateTime zonedTime = ZonedDateTime.of(LocalDateTime.from(time), userZoneID);
+        LocalDateTime utcZonedTime = LocalDateTime.ofInstant(zonedTime.toInstant(), utcZoneID);
+        return utcZonedTime;
+    }
+
+    /** Helper function to convert a time to EST for logical checks on business hours **/
+    public static LocalTime convertToEST(LocalTime localTime) {
         LocalDate currentDate = LocalDate.now();
         LocalDateTime localDateTime = LocalDateTime.of(currentDate, localTime);
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, zoneId);
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());
         ZonedDateTime estZonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("America/New_York"));
         return estZonedDateTime.toLocalTime();
     }
