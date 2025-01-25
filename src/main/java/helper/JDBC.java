@@ -210,6 +210,18 @@ public abstract class JDBC {
         return estZonedDateTime.toLocalTime();
     }
 
+    public static int getIdByColumnValue(String tableName, String idColumn, String valueColumn, String value) throws SQLException {
+        String sql = "SELECT " + idColumn + " FROM " + tableName + " WHERE " + valueColumn + " = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, value);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(idColumn);
+                }
+            }
+        }
+        return -1; // Return -1 if no match is found
+    }
 
     //prepopulates first creation of database with country and division data once
     public static String populateCountry() {

@@ -43,19 +43,26 @@ public interface AppointmentDAO {
     }
 
     public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery) {
-        if (timeQuery <= 0) {
-            return allAppointments;
-        } else {
-            ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
-            for (Appointment appointment : allAppointments) {
-                LocalDateTime startTime = appointment.getStartTime();
-                if (startTime.isAfter(LocalDateTime.now()) && startTime.isBefore(LocalDateTime.now().plusDays(timeQuery))){
-                    filteredAppointments.add(appointment);
+        ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
+        try {
+            List<Appointment> allAppointments = getAllAppointments();
+            if (timeQuery <= 0) {
+                filteredAppointments.addAll(allAppointments);
+            } else {
+                LocalDateTime now = LocalDateTime.now();
+                for (Appointment appointment : allAppointments) {
+                    LocalDateTime startTime = appointment.getStartTime();
+                    if (startTime.isAfter(now) && startTime.isBefore(now.plusDays(timeQuery))) {
+                        filteredAppointments.add(appointment);
+                    }
                 }
             }
-            return filteredAppointments;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return filteredAppointments;
     }
+
 
     /**sql query to get all matching appointment month and type data**/
     public static ObservableList<TypeMonthMatch> getTypeMonthAppointments() {

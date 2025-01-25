@@ -101,4 +101,9 @@ public class Customer {
     public void setLastUpdatedBy(String lastUpdatedBy) {
         LastUpdatedBy = lastUpdatedBy;
     }
+
+    @Override
+    public String toString() {
+        return this.getCustomerName();
+    }
 }

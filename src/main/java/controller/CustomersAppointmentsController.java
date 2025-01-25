@@ -164,7 +164,7 @@ public class CustomersAppointmentsController implements Initializable {
             CustomerDAO.getAllCustomers();
             AppointmentDAO.getAllAppointments();
             observablCustomerList = FXCollections.observableArrayList(CustomerDAO.getAllCustomers());
-            observableAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getAllAppointments());
+            observableAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getTimeQueryAppointments(0));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -176,20 +176,19 @@ public class CustomersAppointmentsController implements Initializable {
         CustomerTBPhone.setCellValueFactory(new PropertyValueFactory<>("Phone"));
         CustomerTBPostalCode.setCellValueFactory(new PropertyValueFactory<>("PostalCode"));
         /**lambda to add an eventlistener so a user can easily select between the appointmenttableview data**/
-//        AppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-//            if (newValue == null) {
-//                return;
-//            }
-//            RadioButton selectedRadioButton = (RadioButton) newValue;
-//            if (selectedRadioButton == AllAppointmentsRadio) {
-//                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
-//            } else if (selectedRadioButton == WeekAppointmentsRadio) {
-//                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
-//            } else if (selectedRadioButton == MonthAppointmentsRadio) {
-//                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
-//            }
-//        });
-//        AllAppointmentsTableView.setItems(AppointmentDAO.getAllAppointments(0));
+        AppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            RadioButton selectedRadioButton = (RadioButton) newValue;
+            if (selectedRadioButton == AllAppointmentsRadio) {
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
+            } else if (selectedRadioButton == WeekAppointmentsRadio) {
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
+            } else if (selectedRadioButton == MonthAppointmentsRadio) {
+                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
+            }
+        });
         AllAppointmentsTableView.setItems(observableAppointmentList);
         AppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
         AppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));

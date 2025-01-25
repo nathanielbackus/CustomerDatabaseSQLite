@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="595.0" prefWidth="353.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
     <children>
-        <Label layoutX="14.0" layoutY="14.0" style="-fx-font-size: 30;" text="Add Appointment" />
+        <Label fx:id="AppointmentLabel" layoutX="14.0" layoutY="14.0" style="-fx-font-size: 30;" text="Add Appointment" />
         <Label layoutX="20.0" layoutY="70.0" text="ID:" />
         <Label layoutX="20.0" layoutY="110.0" text="Title:" />
         <Label layoutX="20.0" layoutY="150.0" text="Description:" />
@@ -21,8 +21,8 @@
         <TextField fx:id="AppointmentLocationTextField" layoutX="150.0" layoutY="186.0" prefHeight="26.0" prefWidth="183.0" />
         <ComboBox fx:id="ContactComboBox" layoutX="150.0" layoutY="226.0" prefHeight="26.0" prefWidth="183.0" />
         <TextField fx:id="AppointmentTypeTextField" layoutX="150.0" layoutY="266.0" prefHeight="26.0" prefWidth="183.0" />
-        <TextField fx:id="AppointmentCustomerIDTextField" layoutX="150.0" layoutY="306.0" prefHeight="26.0" prefWidth="183.0" />
-        <TextField fx:id="AppointmentUserIDTextField" layoutX="150.0" layoutY="346.0" prefHeight="26.0" prefWidth="183.0" />
+        <ComboBox fx:id="CustomerComboBox" layoutX="150.0" layoutY="306.0" prefHeight="26.0" prefWidth="183.0" />
+        <ComboBox fx:id="UserComboBox" layoutX="150.0" layoutY="346.0" prefHeight="26.0" prefWidth="183.0" />
         <DatePicker fx:id="AppointmentStartDatePicker" layoutX="150.0" layoutY="386.0" prefHeight="26.0" prefWidth="183.0" />
         <ComboBox fx:id="AppointmentStartTimeComboBox" layoutX="150.0" layoutY="426.0" prefHeight="26.0" prefWidth="183.0" />
         <DatePicker fx:id="AppointmentEndDatePicker" layoutX="150.0" layoutY="466.0" prefHeight="26.0" prefWidth="183.0" />
