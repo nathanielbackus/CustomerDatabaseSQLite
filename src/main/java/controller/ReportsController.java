@@ -72,7 +72,7 @@ public class ReportsController implements Initializable {
             while (rs.next()){
                 int contactID = rs.getInt("Contact_ID");
                 String name = rs.getString("Contact_Name");
-                String email = rs.getString("email");
+                String email = rs.getString("contact_email");
                 contactsNameList.add(new Contact(contactID,name,email));
             }
         } catch (SQLException e) {

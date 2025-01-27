@@ -24,7 +24,8 @@ public class AppointmentController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
-
+    // Initialize ComboBox items
+    ObservableList<String> appointmentTypes = FXCollections.observableArrayList("Remote", "InPerson");
     private ObservableList<Contact> observableContactList;
     private ObservableList<Customer> observableCustomerList;
     private ObservableList<User> observableUserList;
@@ -32,9 +33,11 @@ public class AppointmentController implements Initializable {
     private Label AppointmentLabel;
     @FXML
     private TextField AppointmentDescriptionTextField, AppointmentLocationTextField, AppointmentTitleTextField,
-            AppointmentTypeTextField, AppointmentIDTextField;
+            AppointmentIDTextField;
     @FXML
     private DatePicker AppointmentEndDatePicker, AppointmentStartDatePicker;
+    @FXML
+    private ComboBox AppointmentTypeComboBox;
     @FXML
     private ComboBox<LocalTime> AppointmentEndTimeComboBox, AppointmentStartTimeComboBox;
     @FXML
@@ -68,7 +71,7 @@ public class AppointmentController implements Initializable {
                 break;
             }
         }
-        AppointmentTypeTextField.setText(appointment.getType());
+        AppointmentTypeComboBox.getSelectionModel().select(appointment.getType());
         CustomerComboBox.getItems();
         for (Customer customer : CustomerComboBox.getItems()) {
             if (customer.getCustomerID() == appointment.getCustomerID()) {
@@ -97,7 +100,7 @@ public class AppointmentController implements Initializable {
             String title = AppointmentTitleTextField.getText();
             String description = AppointmentDescriptionTextField.getText();
             String location = AppointmentLocationTextField.getText();
-            String type = AppointmentTypeTextField.getText();
+            String type = String.valueOf(AppointmentTypeComboBox.getSelectionModel().getSelectedItem());
             String stringStartTime = String.valueOf((AppointmentStartTimeComboBox.getSelectionModel().getSelectedItem()));
             if (stringStartTime == null) {
                 JDBC.ErrorMessage("Input Error", "Start time not selected", "Please select a start time.");
@@ -208,6 +211,7 @@ public class AppointmentController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        AppointmentTypeComboBox.setItems(appointmentTypes);
         ContactComboBox.setItems(observableContactList);
         UserComboBox.setItems(observableUserList);
         CustomerComboBox.setItems(observableCustomerList);

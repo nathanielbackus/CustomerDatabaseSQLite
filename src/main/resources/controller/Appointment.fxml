@@ -20,7 +20,7 @@
         <TextField fx:id="AppointmentDescriptionTextField" layoutX="150.0" layoutY="146.0" prefHeight="26.0" prefWidth="183.0" />
         <TextField fx:id="AppointmentLocationTextField" layoutX="150.0" layoutY="186.0" prefHeight="26.0" prefWidth="183.0" />
         <ComboBox fx:id="ContactComboBox" layoutX="150.0" layoutY="226.0" prefHeight="26.0" prefWidth="183.0" />
-        <TextField fx:id="AppointmentTypeTextField" layoutX="150.0" layoutY="266.0" prefHeight="26.0" prefWidth="183.0" />
+        <ComboBox fx:id="AppointmentTypeComboBox" layoutX="150.0" layoutY="266.0" prefHeight="26.0" prefWidth="183.0" />
         <ComboBox fx:id="CustomerComboBox" layoutX="150.0" layoutY="306.0" prefHeight="26.0" prefWidth="183.0" />
         <ComboBox fx:id="UserComboBox" layoutX="150.0" layoutY="346.0" prefHeight="26.0" prefWidth="183.0" />
         <DatePicker fx:id="AppointmentStartDatePicker" layoutX="150.0" layoutY="386.0" prefHeight="26.0" prefWidth="183.0" />

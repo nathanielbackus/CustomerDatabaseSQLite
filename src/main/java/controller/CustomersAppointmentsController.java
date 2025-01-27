@@ -28,19 +28,31 @@ public class CustomersAppointmentsController implements Initializable {
     private ObservableList<Customer> observablCustomerList;
     private ObservableList<Appointment> observableAppointmentList;
     @FXML
-    private TableView<Appointment> AllAppointmentsTableView;
+    private ToggleGroup InPersonAppointmentsTG;
     @FXML
-    private ToggleGroup AppointmentsTG;
+    private TableView<Appointment> AllInPersonAppointmentsTableView;
+    @FXML
+    private TableColumn<?, ?> InPersonAppointmentsTBContact, InPersonAppointmentsTBCustomerID, InPersonAppointmentsTBDesc,
+            InPersonAppointmentsTBID, InPersonAppointmentsTBLocation, InPersonAppointmentsTBTitle, InPersonAppointmentsTBType,
+            InPersonAppointmentsTBUserID;
+    @FXML
+    private RadioButton AllInPersonAppointmentsRadio, WeekInPersonAppointmentsRadio, MonthInPersonAppointmentsRadio;
+    @FXML
+    private TableColumn<Appointment, String> InPersonAppointmentsTBStart, InPersonAppointmentsTBEnd;
+    @FXML
+    private ToggleGroup RemoteAppointmentsTG;
+    @FXML
+    private TableView<Appointment> AllRemoteAppointmentsTableView;
+    @FXML
+    private TableColumn<?, ?> RemoteAppointmentsTBContact, RemoteAppointmentsTBCustomerID, RemoteAppointmentsTBDesc,
+            RemoteAppointmentsTBID, RemoteAppointmentsTBLocation, RemoteAppointmentsTBTitle, RemoteAppointmentsTBType,
+            RemoteAppointmentsTBUserID;
+    @FXML
+    private RadioButton AllRemoteAppointmentsRadio, WeekRemoteAppointmentsRadio, MonthRemoteAppointmentsRadio;
+    @FXML
+    private TableColumn<Appointment, String> RemoteAppointmentsTBStart, RemoteAppointmentsTBEnd;
     @FXML
     private TableView<Customer> AllCustomersTableView;
-    @FXML
-    private TableColumn<?, ?> AppointmentsTBContact, AppointmentsTBCustomerID, AppointmentsTBDesc,
-            AppointmentsTBID, AppointmentsTBLocation, AppointmentsTBTitle, AppointmentsTBType,
-            AppointmentsTBUserID;
-    @FXML
-    private RadioButton AllAppointmentsRadio, WeekAppointmentsRadio, MonthAppointmentsRadio;
-    @FXML
-    private TableColumn<Appointment, String> AppointmentsTBStart, AppointmentsTBEnd;
     @FXML
     private TableColumn<?, ?> CustomerTBAddress, CustomerTBDivisionID, CustomerTBID, CustomerTBName, CustomerTBPhone,
             CustomerTBPostalCode;
@@ -112,7 +124,7 @@ public class CustomersAppointmentsController implements Initializable {
         loader.setLocation(getClass().getResource("Appointment.fxml"));
         loader.load();
         AppointmentController AController = loader.getController();
-        AController.setAppointment(AllAppointmentsTableView.getSelectionModel().getSelectedItem());
+        AController.setAppointment(AllInPersonAppointmentsTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
@@ -122,7 +134,7 @@ public class CustomersAppointmentsController implements Initializable {
     /**delete selected item from appointment tableview and from database**/
     @FXML
     void OnActionDeleteAppointment(ActionEvent event) throws IOException, SQLException {
-        Appointment selectedAppointment = AllAppointmentsTableView.getSelectionModel().getSelectedItem();
+        Appointment selectedAppointment = AllInPersonAppointmentsTableView.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete Appointment?");
@@ -176,29 +188,29 @@ public class CustomersAppointmentsController implements Initializable {
         CustomerTBPhone.setCellValueFactory(new PropertyValueFactory<>("Phone"));
         CustomerTBPostalCode.setCellValueFactory(new PropertyValueFactory<>("PostalCode"));
         /**lambda to add an eventlistener so a user can easily select between the appointmenttableview data**/
-        AppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+        InPersonAppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
             RadioButton selectedRadioButton = (RadioButton) newValue;
-            if (selectedRadioButton == AllAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
-            } else if (selectedRadioButton == WeekAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
-            } else if (selectedRadioButton == MonthAppointmentsRadio) {
-                AllAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
+            if (selectedRadioButton == AllInPersonAppointmentsRadio) {
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
+            } else if (selectedRadioButton == WeekInPersonAppointmentsRadio) {
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
+            } else if (selectedRadioButton == MonthInPersonAppointmentsRadio) {
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
             }
         });
-        AllAppointmentsTableView.setItems(observableAppointmentList);
-        AppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
-        AppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
-        AppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));
-        AppointmentsTBLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
-        AppointmentsTBType.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        AppointmentsTBStart.setCellValueFactory(new PropertyValueFactory<>("StartTime"));
-        AppointmentsTBEnd.setCellValueFactory(new PropertyValueFactory<>("EndTime"));
-        AppointmentsTBCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
-        AppointmentsTBUserID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
-        AppointmentsTBContact.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+        AllInPersonAppointmentsTableView.setItems(observableAppointmentList);
+        InPersonAppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
+        InPersonAppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        InPersonAppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        InPersonAppointmentsTBLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        InPersonAppointmentsTBType.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        InPersonAppointmentsTBStart.setCellValueFactory(new PropertyValueFactory<>("StartTime"));
+        InPersonAppointmentsTBEnd.setCellValueFactory(new PropertyValueFactory<>("EndTime"));
+        InPersonAppointmentsTBCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
+        InPersonAppointmentsTBUserID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
+        InPersonAppointmentsTBContact.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
     }}
 

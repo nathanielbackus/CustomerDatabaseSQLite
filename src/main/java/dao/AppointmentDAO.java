@@ -17,35 +17,46 @@ public interface AppointmentDAO {
     public static List<Appointment> getTimeQueryAppointments() {
         return allAppointments;
     }
-    public static List<Appointment> getAllAppointments() throws SQLException {
+    public static List<Appointment> getAllAppointments(String type) throws SQLException {
         List<Appointment> appointmentReturnList = new ArrayList<>();
-        String sql = "SELECT * FROM APPOINTMENTS;";
-        try (PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()){
-            while (rs.next()) {
-                int appointmentID = rs.getInt("appointment_id");
-                String Title = rs.getString("Title");
-                String Description = rs.getString("Description");
-                String Location = rs.getString("Location");
-                String Type = rs.getString("Type");
-                Timestamp start = rs.getTimestamp("Start");
-                Timestamp end = rs.getTimestamp("End");
-                int CustomerID = rs.getInt("Customer_ID");
-                int UserID = rs.getInt("User_ID");
-                int ContactID = rs.getInt("Contact_ID");
-                Appointment appointment = new Appointment(appointmentID, Title, Description, Location, Type, start.toLocalDateTime(), end.toLocalDateTime(), CustomerID, UserID, ContactID);
-                appointmentReturnList.add(appointment);
+        String sql = "SELECT * FROM APPOINTMENTS WHERE type = ?;";
+
+        try (PreparedStatement ps = JDBC.connection.prepareStatement(sql)) {
+            ps.setString(1, type); // Set the type parameter for the query
+            try (ResultSet rs = ps.executeQuery()) { // Execute the query and process the result set
+                while (rs.next()) {
+                    int appointmentID = rs.getInt("appointment_id");
+                    String Title = rs.getString("Title");
+                    String Description = rs.getString("Description");
+                    String Location = rs.getString("Location");
+                    String Type = rs.getString("Type");
+                    Timestamp start = rs.getTimestamp("Start");
+                    Timestamp end = rs.getTimestamp("End");
+                    int CustomerID = rs.getInt("Customer_ID");
+                    int UserID = rs.getInt("User_ID");
+                    int ContactID = rs.getInt("Contact_ID");
+
+                    Appointment appointment = new Appointment(
+                            appointmentID, Title, Description, Location, Type,
+                            start.toLocalDateTime(), end.toLocalDateTime(),
+                            CustomerID, UserID, ContactID
+                    );
+                    appointmentReturnList.add(appointment);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e; // Rethrow the exception to allow the caller to handle it
         }
+
         return appointmentReturnList;
     }
+
 
     public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery) {
         ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
         try {
-            List<Appointment> allAppointments = getAllAppointments();
+            List<Appointment> allAppointments = getAllAppointments(); //getAllAppointments(type)?
             if (timeQuery <= 0) {
                 filteredAppointments.addAll(allAppointments);
             } else {
@@ -68,13 +79,15 @@ public interface AppointmentDAO {
     public static ObservableList<TypeMonthMatch> getTypeMonthAppointments() {
         ObservableList<TypeMonthMatch> combinedAppointments = FXCollections.observableArrayList();
         try {
-            String sql = "SELECT type AS appointmentType, month(start) AS appointmentMonth, count(1) AS totalCount FROM client_schedule.appointments GROUP BY type, month(start);";
+            // Use strftime('%m', column) to extract the month in SQLite
+            String sql = "SELECT type AS appointmentType, strftime('%m', start) AS appointmentMonth, COUNT(*) AS totalCount " +
+                    "FROM appointments GROUP BY type, strftime('%m', start);";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 String Type = rs.getString("appointmentType");
-                String Month = rs.getString("appointmentMonth");
-                int Count = Integer.parseInt(rs.getString("totalCount"));
+                String Month = rs.getString("appointmentMonth"); // This will return the month as a string (e.g., "01" for January)
+                int Count = rs.getInt("totalCount");
                 combinedAppointments.add(new TypeMonthMatch(Type, Month, Count));
             }
         } catch (SQLException e) {
@@ -82,11 +95,12 @@ public interface AppointmentDAO {
         }
         return combinedAppointments;
     }
+
     /**sql query to collect data on appointments belonging to specified contact**/
     public static ObservableList<ReportContact> getContactAppointments(int contactID) {
         ObservableList<ReportContact> contactAppointments = FXCollections.observableArrayList();
         try {
-            String sql = "SELECT appointment_id, title, description, location, type, start, end, customer_id, user_id FROM client_schedule.appointments WHERE contact_id = ?;";
+            String sql = "SELECT appointment_id, title, description, location, type, start, end, customer_id, user_id FROM appointments WHERE contact_id = ?;";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setInt(1, contactID);
             ResultSet rs = ps.executeQuery();
