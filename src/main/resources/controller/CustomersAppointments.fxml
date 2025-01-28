@@ -5,6 +5,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
@@ -18,54 +19,53 @@
          </font></Label>
         <RadioButton fx:id="AllInPersonAppointmentsRadio" layoutX="243.0" layoutY="21.0" mnemonicParsing="false" selected="true" text="All Appointments">
          <toggleGroup>
-                <ToggleGroup fx:id="InPersonAppointmentsTG"/>
+                <ToggleGroup fx:id="InPersonAppointmentsTG" />
          </toggleGroup></RadioButton>
         <RadioButton fx:id="WeekInPersonAppointmentsRadio" layoutX="367.0" layoutY="21.0" mnemonicParsing="false" text="Appointments This Week" toggleGroup="$InPersonAppointmentsTG" />
         <RadioButton fx:id="MonthInPersonAppointmentsRadio" layoutX="533.0" layoutY="21.0" mnemonicParsing="false" text="Appointments This Month" toggleGroup="$InPersonAppointmentsTG" />
-        <Button fx:id="OnActionAddInPersonAppointment" layoutX="726.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionAddAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
-        <Button fx:id="OnActionEditInPersonAppointment" layoutX="806.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionUpdateAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
-        <Button fx:id="OnActionDeleteInPersonAppointment" layoutX="886.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionDeleteAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+        <Button fx:id="OnActionAddInPersonAppointment" layoutX="726.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionAddInPersonAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
+        <Button fx:id="OnActionEditInPersonAppointment" layoutX="806.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionUpdateInPersonAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+        <Button fx:id="OnActionDeleteInPersonAppointment" layoutX="886.0" layoutY="16.0" mnemonicParsing="false" onAction="#OnActionDeleteInPersonAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
         <TableView fx:id="AllInPersonAppointmentsTableView" layoutX="13.0" layoutY="54.0" prefHeight="150.0" prefWidth="931.0">
             <columns>
                 <TableColumn fx:id="InPersonAppointmentsTBID" prefWidth="48.131869316101074" text="ID" />
                 <TableColumn fx:id="InPersonAppointmentsTBTitle" prefWidth="109.77470779418945" text="Title" />
                 <TableColumn fx:id="InPersonAppointmentsTBDesc" prefWidth="104.72531127929688" text="Description" />
-                <TableColumn fx:id="InPersonAppointmentsTBLocation" minWidth="0.0" prefWidth="85.59893798828125" text="Location" />
-                <TableColumn fx:id="InPersonAppointmentsTBType" prefWidth="94.0714111328125" text="Type" />
-                <TableColumn fx:id="InPersonAppointmentsTBStart" prefWidth="97.9285888671875" text="Start Date" />
-                <TableColumn fx:id="InPersonAppointmentsTBEnd" prefWidth="92.57147216796875" text="End Date" />
-                <TableColumn fx:id="InPersonAppointmentsTBCustomerID" prefWidth="80.752685546875" text="Customer ID" />
-                <TableColumn fx:id="InPersonAppointmentsTBUserID" prefWidth="91.747314453125" text="User ID" />
-                <TableColumn fx:id="InPersonAppointmentsTBContact" prefWidth="130.43963623046875" text="Contact" />
+                <TableColumn fx:id="InPersonAppointmentsTBLocation" minWidth="0.0" prefWidth="180.0" text="Location" />
+                <TableColumn fx:id="InPersonAppointmentsTBStart" prefWidth="100.0" text="Start Date" />
+                <TableColumn fx:id="InPersonAppointmentsTBEnd" prefWidth="100.0" text="End Date" />
+                <TableColumn fx:id="InPersonAppointmentsTBCustomerID" prefWidth="100.0" text="Customer ID" />
+                <TableColumn fx:id="InPersonAppointmentsTBUserID" prefWidth="55.0" text="User ID" />
+                <TableColumn fx:id="InPersonAppointmentsTBContact" prefWidth="131.5" text="Contact" />
             </columns>
         </TableView>
       <Line endX="829.5" layoutX="115.0" layoutY="210.0" opacity="0.21" startX="-100.0" />
       <Label layoutX="15.0" layoutY="215.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 20;" text="Remote Appointments" />
       <RadioButton fx:id="AllRemoteAppointmentsRadio" layoutX="243.0" layoutY="226.0" mnemonicParsing="false" selected="true" text="All Appointments">
          <toggleGroup>
-            <ToggleGroup fx:id="RemoteAppointmentsTG"/>
+            <ToggleGroup fx:id="RemoteAppointmentsTG" />
          </toggleGroup></RadioButton>
       <RadioButton fx:id="WeekRemoteAppointmentsRadio" layoutX="367.0" layoutY="226.0" mnemonicParsing="false" text="Appointments This Week" toggleGroup="$RemoteAppointmentsTG" />
       <RadioButton fx:id="MonthRemoteAppointmentsRadio" layoutX="533.0" layoutY="226.0" mnemonicParsing="false" text="Appointments This Month" toggleGroup="$RemoteAppointmentsTG" />
-      <Button fx:id="OnActionAddRemoteAppointment" layoutX="726.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionAddAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
-      <Button fx:id="OnActionEditRemoteAppointment" layoutX="806.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionUpdateAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
-      <Button fx:id="OnActionDeleteRemoteAppointment" layoutX="886.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionDeleteAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
+      <Button fx:id="OnActionAddRemoteAppointment" layoutX="726.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionAddRemoteAppointment" prefHeight="26.0" prefWidth="59.0" text="Add" />
+      <Button fx:id="OnActionEditRemoteAppointment" layoutX="806.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionUpdateRemoteAppointment" prefHeight="26.0" prefWidth="58.0" text="Edit" />
+      <Button fx:id="OnActionDeleteRemoteAppointment" layoutX="886.0" layoutY="221.0" mnemonicParsing="false" onAction="#OnActionDeleteRemoteAppointment" prefHeight="26.0" prefWidth="58.0" text="Delete" />
       <TableView fx:id="AllRemoteAppointmentsTableView" layoutX="13.0" layoutY="259.0" prefHeight="150.0" prefWidth="931.0">
          <columns>
             <TableColumn fx:id="RemoteAppointmentsTBID" prefWidth="48.131869316101074" text="ID" />
             <TableColumn fx:id="RemoteAppointmentsTBTitle" prefWidth="109.77470779418945" text="Title" />
             <TableColumn fx:id="RemoteAppointmentsTBDesc" prefWidth="104.72531127929688" text="Description" />
-            <TableColumn fx:id="RemoteAppointmentsTBLocation" minWidth="0.0" prefWidth="85.59893798828125" text="Location" />
-            <TableColumn fx:id="RemoteAppointmentsTBType" prefWidth="94.0714111328125" text="Type" />
-            <TableColumn fx:id="RemoteAppointmentsTBStart" prefWidth="97.9285888671875" text="Start Date" />
-            <TableColumn fx:id="RemoteAppointmentsTBEnd" prefWidth="92.57147216796875" text="End Date" />
-            <TableColumn fx:id="RemoteAppointmentsTBCustomerID" prefWidth="80.752685546875" text="Customer ID" />
-            <TableColumn fx:id="RemoteAppointmentsTBUserID" prefWidth="91.747314453125" text="User ID" />
-            <TableColumn fx:id="RemoteAppointmentsTBContact" prefWidth="130.43963623046875" text="Contact" />
+            <TableColumn fx:id="RemoteAppointmentsTBLocation" minWidth="0.0" prefWidth="180.0" text="Location" />
+            <TableColumn fx:id="RemoteAppointmentsTBStart" prefWidth="100.0" text="Start Date" />
+            <TableColumn fx:id="RemoteAppointmentsTBEnd" prefWidth="100.0" text="End Date" />
+            <TableColumn fx:id="RemoteAppointmentsTBCustomerID" prefWidth="100.0" text="Customer ID" />
+            <TableColumn fx:id="RemoteAppointmentsTBUserID" prefWidth="55.0" text="User ID" />
+            <TableColumn fx:id="RemoteAppointmentsTBContact" prefWidth="131.5" text="Contact" />
          </columns>
       </TableView>
         <Line endX="829.5" layoutX="115.0" layoutY="422.0" opacity="0.21" startX="-100.0" />
         <Label layoutX="13.0" layoutY="434.0" prefHeight="37.0" prefWidth="230.0" style="-fx-font-size: 30;" text="Customers" />
+      <TextField fx:id="OnActionSearchCustomers" layoutX="390.0" layoutY="440.0" onAction="#OnActionSearchCustomers" promptText="Search Customers" />
         <Button fx:id="OnActionAddCustomer" layoutX="570.0" layoutY="440.0" mnemonicParsing="false" onAction="#OnActionAddCustomer" prefHeight="26.0" prefWidth="59.0" text="Add" />
         <Button fx:id="OnActionEditCustomer" layoutX="650.0" layoutY="440.0" mnemonicParsing="false" onAction="#OnActionUpdateCustomer" prefHeight="26.0" prefWidth="58.0" text="Edit" />
         <Button fx:id="OnActionDeleteCustomer" layoutX="730.0" layoutY="440.0" mnemonicParsing="false" onAction="#OnActionDeleteCustomer" prefHeight="26.0" prefWidth="58.0" text="Delete" />

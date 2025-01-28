@@ -14,16 +14,19 @@ public interface AppointmentDAO {
 
     /**list of all appointments, will populate this list with data from the database to then populate tabelviews**/
     public static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
-    public static List<Appointment> getTimeQueryAppointments() {
-        return allAppointments;
-    }
-    public static List<Appointment> getAllAppointments(String type) throws SQLException {
+    public static List<Appointment> getTypedAppointments(String type) throws SQLException {
         List<Appointment> appointmentReturnList = new ArrayList<>();
-        String sql = "SELECT * FROM APPOINTMENTS WHERE type = ?;";
-
+        String sql;
+        if (type.equalsIgnoreCase("All")) {
+            sql = "SELECT * FROM APPOINTMENTS;";
+        } else {
+            sql = "SELECT * FROM APPOINTMENTS WHERE type = ?;";
+        }
         try (PreparedStatement ps = JDBC.connection.prepareStatement(sql)) {
-            ps.setString(1, type); // Set the type parameter for the query
-            try (ResultSet rs = ps.executeQuery()) { // Execute the query and process the result set
+            if (!type.equalsIgnoreCase("All")) {
+                ps.setString(1, type);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int appointmentID = rs.getInt("appointment_id");
                     String Title = rs.getString("Title");
@@ -35,7 +38,6 @@ public interface AppointmentDAO {
                     int CustomerID = rs.getInt("Customer_ID");
                     int UserID = rs.getInt("User_ID");
                     int ContactID = rs.getInt("Contact_ID");
-
                     Appointment appointment = new Appointment(
                             appointmentID, Title, Description, Location, Type,
                             start.toLocalDateTime(), end.toLocalDateTime(),
@@ -46,17 +48,17 @@ public interface AppointmentDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e; // Rethrow the exception to allow the caller to handle it
+            throw e;
         }
-
         return appointmentReturnList;
     }
 
 
-    public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery) {
+
+    public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery, String type) {
         ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
         try {
-            List<Appointment> allAppointments = getAllAppointments(); //getAllAppointments(type)?
+            List<Appointment> allAppointments = getTypedAppointments(type); //getAllAppointments(type)?
             if (timeQuery <= 0) {
                 filteredAppointments.addAll(allAppointments);
             } else {
@@ -226,28 +228,25 @@ public interface AppointmentDAO {
     }
     /**sql to delete appointment from database**/
     public static boolean deleteAppointment(Appointment selectedAppointment) throws SQLException {
-        if (selectedAppointment != null && AppointmentDAO.allAppointments.contains(selectedAppointment)) {
-            int appointmentID = selectedAppointment.getAppointmentID();
-            String sql = "DELETE FROM appointments WHERE Appointment_ID = ?;";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setInt(1, appointmentID);
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                JDBC.InformationMessage("Appointment Deleted", "ID: " + selectedAppointment.getAppointmentID() + " Type: " + selectedAppointment.getType());
-                allAppointments.remove(selectedAppointment);
-                return true;
-            }
+        int appointmentID = selectedAppointment.getAppointmentID();
+        String sql = "DELETE FROM appointments WHERE Appointment_ID = ?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, appointmentID);
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected > 0) {
+            allAppointments.remove(selectedAppointment);
+            return true;
         }
         return false;
     }
     public static int appointmentGenerateID() throws SQLException {
         int maxNumber = 0;
-        for (Appointment appointment : getAllAppointments()){
+        for (Appointment appointment : getTypedAppointments("All")){
             if (appointment.getAppointmentID() > maxNumber){
                 maxNumber = appointment.getAppointmentID();
             }
         }
         int id = maxNumber+1;
         return id;
-    } // this shit is not working. foreign key interference?
+    }
 }

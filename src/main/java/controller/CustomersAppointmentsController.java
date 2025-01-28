@@ -25,8 +25,8 @@ public class CustomersAppointmentsController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
-    private ObservableList<Customer> observablCustomerList;
-    private ObservableList<Appointment> observableAppointmentList;
+    private ObservableList<Customer> observableCustomerList;
+    private ObservableList<Appointment> observableInPersonAppointmentList, observableRemoteAppointmentList;
     @FXML
     private ToggleGroup InPersonAppointmentsTG;
     @FXML
@@ -51,6 +51,8 @@ public class CustomersAppointmentsController implements Initializable {
     private RadioButton AllRemoteAppointmentsRadio, WeekRemoteAppointmentsRadio, MonthRemoteAppointmentsRadio;
     @FXML
     private TableColumn<Appointment, String> RemoteAppointmentsTBStart, RemoteAppointmentsTBEnd;
+    @FXML
+    private TextField OnActionSearchCustomers;
     @FXML
     private TableView<Customer> AllCustomersTableView;
     @FXML
@@ -94,6 +96,7 @@ public class CustomersAppointmentsController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     CustomerDAO.deleteCustomer(selectedCustomer);
+                    observableCustomerList.remove(selectedCustomer);
                 } else if (result.get() == ButtonType.CANCEL) {
                     return;
                 }
@@ -103,6 +106,11 @@ public class CustomersAppointmentsController implements Initializable {
         }
     }
     @FXML
+    void OnActionSearchCustomers(ActionEvent event) throws IOException {
+
+    }
+
+    @FXML
     void OnActionUsersContacts(ActionEvent event) throws IOException {
         stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(getClass().getResource("UsersContacts.fxml"));
@@ -111,20 +119,55 @@ public class CustomersAppointmentsController implements Initializable {
     }
     /**load add appointment scene**/
     @FXML
-    void OnActionAddAppointment(ActionEvent event) throws IOException {
+    void OnActionAddInPersonAppointment(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("Appointment.fxml"));
+        loader.load();
+        AppointmentController AController = loader.getController();
+        String appointmentType = "InPerson";
+        AController.getAppointmentType(appointmentType);
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("Appointment.fxml"));
+        Parent scene = loader.getRoot();
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+    @FXML
+    void OnActionAddRemoteAppointment(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("Appointment.fxml"));
+        loader.load();
+        AppointmentController AController = loader.getController();
+        String appointmentType = "Remote";
+        AController.getAppointmentType(appointmentType);
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
         stage.show();
     }
     /**load and populate update appointment scene**/
     @FXML
-    void OnActionUpdateAppointment(ActionEvent event) throws IOException, SQLException {
+    void OnActionUpdateInPersonAppointment(ActionEvent event) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("Appointment.fxml"));
         loader.load();
         AppointmentController AController = loader.getController();
+        String appointmentType = "InPerson";
+        AController.getAppointmentType(appointmentType);
         AController.setAppointment(AllInPersonAppointmentsTableView.getSelectionModel().getSelectedItem());
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        Parent scene = loader.getRoot();
+        stage.setScene(new Scene(scene));
+        stage.showAndWait();
+    }
+    @FXML
+    void OnActionUpdateRemoteAppointment(ActionEvent event) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("Appointment.fxml"));
+        loader.load();
+        AppointmentController AController = loader.getController();
+        String appointmentType = "Remote";
+        AController.getAppointmentType(appointmentType);
+        AController.setAppointment(AllRemoteAppointmentsTableView.getSelectionModel().getSelectedItem());
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
@@ -133,15 +176,32 @@ public class CustomersAppointmentsController implements Initializable {
 
     /**delete selected item from appointment tableview and from database**/
     @FXML
-    void OnActionDeleteAppointment(ActionEvent event) throws IOException, SQLException {
+    void OnActionDeleteInPersonAppointment(ActionEvent event) throws IOException, SQLException {
         Appointment selectedAppointment = AllInPersonAppointmentsTableView.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Appointment?");
+            alert.setTitle("Delete InPerson Appointment?");
             alert.setHeaderText("Are you sure you want to delete the selected appointment?");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 AppointmentDAO.deleteAppointment(selectedAppointment);
+                observableInPersonAppointmentList.remove(selectedAppointment);
+            } else if (result.get() == ButtonType.CANCEL) {
+                return;
+            }
+        }
+    }
+    @FXML
+    void OnActionDeleteRemoteAppointment(ActionEvent event) throws IOException, SQLException {
+        Appointment selectedAppointment = AllRemoteAppointmentsTableView.getSelectionModel().getSelectedItem();
+        if (selectedAppointment != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Remote Appointment?");
+            alert.setHeaderText("Are you sure you want to delete the selected appointment?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                AppointmentDAO.deleteAppointment(selectedAppointment);
+                observableRemoteAppointmentList.remove(selectedAppointment);
             } else if (result.get() == ButtonType.CANCEL) {
                 return;
             }
@@ -174,13 +234,13 @@ public class CustomersAppointmentsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             CustomerDAO.getAllCustomers();
-            AppointmentDAO.getAllAppointments();
-            observablCustomerList = FXCollections.observableArrayList(CustomerDAO.getAllCustomers());
-            observableAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getTimeQueryAppointments(0));
+            observableCustomerList = FXCollections.observableArrayList(CustomerDAO.getAllCustomers());
+            observableInPersonAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getTimeQueryAppointments(0, "InPerson"));
+            observableRemoteAppointmentList = FXCollections.observableArrayList(AppointmentDAO.getTimeQueryAppointments(0, "Remote"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        AllCustomersTableView.setItems(observablCustomerList);
+        AllCustomersTableView.setItems(observableCustomerList);
         CustomerTBID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         CustomerTBAddress.setCellValueFactory(new PropertyValueFactory<>("Address"));
         CustomerTBDivisionID.setCellValueFactory(new PropertyValueFactory<>("DivisionID"));
@@ -194,23 +254,46 @@ public class CustomersAppointmentsController implements Initializable {
             }
             RadioButton selectedRadioButton = (RadioButton) newValue;
             if (selectedRadioButton == AllInPersonAppointmentsRadio) {
-                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0));
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0, "InPerson"));
             } else if (selectedRadioButton == WeekInPersonAppointmentsRadio) {
-                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7));
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7, "InPerson"));
             } else if (selectedRadioButton == MonthInPersonAppointmentsRadio) {
-                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30));
+                AllInPersonAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30, "InPerson"));
             }
         });
-        AllInPersonAppointmentsTableView.setItems(observableAppointmentList);
+        AllInPersonAppointmentsTableView.setItems(observableInPersonAppointmentList);
         InPersonAppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
         InPersonAppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         InPersonAppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));
         InPersonAppointmentsTBLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
-        InPersonAppointmentsTBType.setCellValueFactory(new PropertyValueFactory<>("Type"));
         InPersonAppointmentsTBStart.setCellValueFactory(new PropertyValueFactory<>("StartTime"));
         InPersonAppointmentsTBEnd.setCellValueFactory(new PropertyValueFactory<>("EndTime"));
         InPersonAppointmentsTBCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         InPersonAppointmentsTBUserID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
         InPersonAppointmentsTBContact.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+
+        RemoteAppointmentsTG.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            RadioButton selectedRadioButton = (RadioButton) newValue;
+            if (selectedRadioButton == AllRemoteAppointmentsRadio) {
+                AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0, "Remote"));
+            } else if (selectedRadioButton == WeekRemoteAppointmentsRadio) {
+                AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7, "Remote"));
+            } else if (selectedRadioButton == MonthInPersonAppointmentsRadio) {
+                AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30, "Remote"));
+            }
+        });
+        AllRemoteAppointmentsTableView.setItems(observableRemoteAppointmentList);
+        RemoteAppointmentsTBID.setCellValueFactory(new PropertyValueFactory<>("AppointmentID"));
+        RemoteAppointmentsTBTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        RemoteAppointmentsTBDesc.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        RemoteAppointmentsTBLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        RemoteAppointmentsTBStart.setCellValueFactory(new PropertyValueFactory<>("StartTime"));
+        RemoteAppointmentsTBEnd.setCellValueFactory(new PropertyValueFactory<>("EndTime"));
+        RemoteAppointmentsTBCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
+        RemoteAppointmentsTBUserID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
+        RemoteAppointmentsTBContact.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
     }}
 

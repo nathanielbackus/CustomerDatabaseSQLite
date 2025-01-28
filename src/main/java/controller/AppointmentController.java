@@ -14,8 +14,6 @@ import javafx.stage.Stage;
 import model.*;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.ResourceBundle;
@@ -24,20 +22,17 @@ public class AppointmentController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
-    // Initialize ComboBox items
-    ObservableList<String> appointmentTypes = FXCollections.observableArrayList("Remote", "InPerson");
     private ObservableList<Contact> observableContactList;
     private ObservableList<Customer> observableCustomerList;
     private ObservableList<User> observableUserList;
+    String appointmentType;
     @FXML
-    private Label AppointmentLabel;
+    private Label AppointmentLabel, LocationLabel;
     @FXML
     private TextField AppointmentDescriptionTextField, AppointmentLocationTextField, AppointmentTitleTextField,
             AppointmentIDTextField;
     @FXML
     private DatePicker AppointmentEndDatePicker, AppointmentStartDatePicker;
-    @FXML
-    private ComboBox AppointmentTypeComboBox;
     @FXML
     private ComboBox<LocalTime> AppointmentEndTimeComboBox, AppointmentStartTimeComboBox;
     @FXML
@@ -46,9 +41,15 @@ public class AppointmentController implements Initializable {
     private ComboBox<User> UserComboBox;
     @FXML
     private ComboBox<Customer> CustomerComboBox;
-
-
     Appointment CurrentAppointment;
+    public void getAppointmentType(String appointmentTypeData) {
+        appointmentType = appointmentTypeData;
+        if (appointmentType.equals("InPerson")) {
+            LocationLabel.setText("Location: ");
+        } else {
+            LocationLabel.setText("Meeting Link: ");
+        }
+    }
     /**event to open the customerappointments scene**/
     @FXML
     void OnActionCustomerAppointments(ActionEvent event) throws IOException {
@@ -71,7 +72,6 @@ public class AppointmentController implements Initializable {
                 break;
             }
         }
-        AppointmentTypeComboBox.getSelectionModel().select(appointment.getType());
         CustomerComboBox.getItems();
         for (Customer customer : CustomerComboBox.getItems()) {
             if (customer.getCustomerID() == appointment.getCustomerID()) {
@@ -100,7 +100,7 @@ public class AppointmentController implements Initializable {
             String title = AppointmentTitleTextField.getText();
             String description = AppointmentDescriptionTextField.getText();
             String location = AppointmentLocationTextField.getText();
-            String type = String.valueOf(AppointmentTypeComboBox.getSelectionModel().getSelectedItem());
+            String type = appointmentType;
             String stringStartTime = String.valueOf((AppointmentStartTimeComboBox.getSelectionModel().getSelectedItem()));
             if (stringStartTime == null) {
                 JDBC.ErrorMessage("Input Error", "Start time not selected", "Please select a start time.");
@@ -160,8 +160,7 @@ public class AppointmentController implements Initializable {
             LocalDateTime utcEndTime = JDBC.toUTC(endTimeAndDate);
             System.out.println(utcStartTime);
             /**query if overlapping**/
-//            for (Appointment appointment : AppointmentDAO.getTimeQueryAppointments(0)) {
-            for (Appointment appointment : AppointmentDAO.getAllAppointments()){
+            for (Appointment appointment : AppointmentDAO.getTypedAppointments("All")){
                 if (appointment.getCustomerID() == customer.getCustomerID()) {
                     LocalDateTime start = JDBC.toUTC(appointment.getStartTime());
                     LocalDateTime end = JDBC.toUTC(appointment.getEndTime());
@@ -201,9 +200,6 @@ public class AppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ContactDAO.getAllContacts();
-            UserDAO.getAllUsers();
-            CustomerDAO.getAllCustomers();
             observableContactList = FXCollections.observableArrayList(ContactDAO.getAllContacts());
             observableUserList = FXCollections.observableArrayList(UserDAO.getAllUsers());
             observableCustomerList = FXCollections.observableArrayList(CustomerDAO.getAllCustomers());
@@ -211,7 +207,6 @@ public class AppointmentController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        AppointmentTypeComboBox.setItems(appointmentTypes);
         ContactComboBox.setItems(observableContactList);
         UserComboBox.setItems(observableUserList);
         CustomerComboBox.setItems(observableCustomerList);

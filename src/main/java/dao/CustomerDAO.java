@@ -72,17 +72,17 @@ public interface CustomerDAO {
     }
     /**deletes customer in database**/
     public static boolean deleteCustomer(Customer selectedCustomer) throws SQLException {
-        if (selectedCustomer != null && allCustomers.contains(selectedCustomer)) {
-            int customerID = selectedCustomer.getCustomerID();
-            String sql = "DELETE FROM customers WHERE Customer_ID = ?;";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setInt(1, customerID);
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                allCustomers.remove(selectedCustomer);
-                return true;
-            }
+//        if (selectedCustomer != null && allCustomers.contains(selectedCustomer)) {
+        int customerID = selectedCustomer.getCustomerID();
+        String sql = "DELETE FROM customers WHERE Customer_ID = ?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected > 0) {
+            allCustomers.remove(selectedCustomer);
+            return true;
         }
+//        }
         return false;
     }
 }
