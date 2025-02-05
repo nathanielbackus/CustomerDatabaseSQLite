@@ -25,7 +25,6 @@ public abstract class JDBC {
             connection = DriverManager.getConnection(jdbcUrl);
             System.out.println("Connected to SQLite database!");
 
-            // Initialize database if needed
             initializeDatabase();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -130,14 +129,6 @@ public abstract class JDBC {
             );
         """;
 
-        //reportcontact
-
-        //report customer
-
-        //type month match??
-
-        //relational tables?
-
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON;");
             System.out.println("Foreign key constraints enabled.");
@@ -220,7 +211,7 @@ public abstract class JDBC {
                 }
             }
         }
-        return -1; // Return -1 if no match is found
+        return -1;
     }
 
     //prepopulates first creation of database with country and division data once

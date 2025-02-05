@@ -53,12 +53,10 @@ public interface AppointmentDAO {
         return appointmentReturnList;
     }
 
-
-
     public static ObservableList<Appointment> getTimeQueryAppointments(int timeQuery, String type) {
         ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
         try {
-            List<Appointment> allAppointments = getTypedAppointments(type); //getAllAppointments(type)?
+            List<Appointment> allAppointments = getTypedAppointments(type);
             if (timeQuery <= 0) {
                 filteredAppointments.addAll(allAppointments);
             } else {
@@ -81,14 +79,13 @@ public interface AppointmentDAO {
     public static ObservableList<TypeMonthMatch> getTypeMonthAppointments() {
         ObservableList<TypeMonthMatch> combinedAppointments = FXCollections.observableArrayList();
         try {
-            // Use strftime('%m', column) to extract the month in SQLite
             String sql = "SELECT type AS appointmentType, strftime('%m', start) AS appointmentMonth, COUNT(*) AS totalCount " +
                     "FROM appointments GROUP BY type, strftime('%m', start);";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String Type = rs.getString("appointmentType");
-                String Month = rs.getString("appointmentMonth"); // This will return the month as a string (e.g., "01" for January)
+                String Month = rs.getString("appointmentMonth");
                 int Count = rs.getInt("totalCount");
                 combinedAppointments.add(new TypeMonthMatch(Type, Month, Count));
             }
@@ -178,15 +175,12 @@ public interface AppointmentDAO {
         ps.setString(3, Description);
         ps.setString(4, Location);
         ps.setString(5, Type);
-        // Convert to UTC and format
         ZoneId userZoneId = ZoneId.systemDefault();
         ZoneId utcZoneId = ZoneId.of("UTC");
         ZonedDateTime zonedStart = ZonedDateTime.of(Start, userZoneId);
         ZonedDateTime utcStart = ZonedDateTime.ofInstant(zonedStart.toInstant(), utcZoneId);
         ZonedDateTime zonedEnd = ZonedDateTime.of(End, userZoneId);
         ZonedDateTime utcEnd = ZonedDateTime.ofInstant(zonedEnd.toInstant(), utcZoneId);
-
-        // Format the datetime strings
         ps.setString(6, utcStart.format(formatter));
         ps.setString(7, utcEnd.format(formatter));
         ps.setString(8, CreatedBy);

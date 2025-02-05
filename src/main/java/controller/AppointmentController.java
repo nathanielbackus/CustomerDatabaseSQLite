@@ -160,11 +160,14 @@ public class AppointmentController implements Initializable {
             LocalDateTime utcEndTime = JDBC.toUTC(endTimeAndDate);
             System.out.println(utcStartTime);
             /**query if overlapping**/
-            for (Appointment appointment : AppointmentDAO.getTypedAppointments("All")){
+            for (Appointment appointment : AppointmentDAO.getTypedAppointments("All")) {
                 if (appointment.getCustomerID() == customer.getCustomerID()) {
-                    LocalDateTime start = JDBC.toUTC(appointment.getStartTime());
-                    LocalDateTime end = JDBC.toUTC(appointment.getEndTime());
-                    if ((start.isBefore(utcEndTime) || start.isEqual(utcEndTime)) && end.isAfter(utcStartTime)) {
+                    LocalDateTime start = appointment.getStartTime() != null ? JDBC.toUTC(appointment.getStartTime()) : null;
+                    LocalDateTime end = appointment.getEndTime() != null ? JDBC.toUTC(appointment.getEndTime()) : null;
+
+                    if (start != null && end != null &&
+                            ((start.isBefore(utcEndTime) && end.isAfter(utcStartTime)) ||
+                                    start.equals(utcStartTime) || end.equals(utcEndTime))) {
                         JDBC.ErrorMessage("Time Error", "Appointment Overlap", "Please choose a time for an appointment that does not overlap with another appointment.");
                         return;
                     }

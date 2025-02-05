@@ -3,6 +3,7 @@ import dao.*;
 import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +26,7 @@ public class CustomersAppointmentsController implements Initializable {
     /**scene elements**/
     Stage stage;
     Parent scene;
+    Customer customer;
     private ObservableList<Customer> observableCustomerList;
     private ObservableList<Appointment> observableInPersonAppointmentList, observableRemoteAppointmentList;
     @FXML
@@ -105,11 +107,6 @@ public class CustomersAppointmentsController implements Initializable {
             }
         }
     }
-    @FXML
-    void OnActionSearchCustomers(ActionEvent event) throws IOException {
-
-    }
-
     @FXML
     void OnActionUsersContacts(ActionEvent event) throws IOException {
         stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
@@ -281,7 +278,7 @@ public class CustomersAppointmentsController implements Initializable {
                 AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(0, "Remote"));
             } else if (selectedRadioButton == WeekRemoteAppointmentsRadio) {
                 AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(7, "Remote"));
-            } else if (selectedRadioButton == MonthInPersonAppointmentsRadio) {
+            } else if (selectedRadioButton == MonthRemoteAppointmentsRadio) {
                 AllRemoteAppointmentsTableView.setItems(AppointmentDAO.getTimeQueryAppointments(30, "Remote"));
             }
         });
@@ -295,5 +292,20 @@ public class CustomersAppointmentsController implements Initializable {
         RemoteAppointmentsTBCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         RemoteAppointmentsTBUserID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
         RemoteAppointmentsTBContact.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+
+        FilteredList<Customer> searchedCustomers = new FilteredList<>(observableCustomerList, b -> true);
+
+        OnActionSearchCustomers.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchedCustomers.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return item.getCustomerName().toLowerCase().contains(lowerCaseFilter) ||
+                        item.getAddress().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+
+        AllCustomersTableView.setItems(searchedCustomers);
     }}
 

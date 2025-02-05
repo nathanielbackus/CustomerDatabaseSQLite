@@ -25,8 +25,6 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-//ADD SCENES FOR CONTACT AND USER!!
-//ADD DAO FOR CONTAVT AND USER!!
 public class UsersContactsController implements Initializable {
     Stage stage;
     Parent scene;
